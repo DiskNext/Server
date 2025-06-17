@@ -1,0 +1,12 @@
+__pycache__/
+.pytest_cache/
+.venv/
+.env/
+.vscode/
+.VSCodeCounter/
+
+*.py[cod]
+*.pyo
+*.pyd
+
+*.code-workspace
