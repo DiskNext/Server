@@ -12,7 +12,8 @@ from .controllers import (
     vas,
     tag,
     webdav,
-    admin
+    admin,
+    slave
 )
 
 Router: list[APIRouter] = [
@@ -39,5 +40,7 @@ Router: list[APIRouter] = [
     admin.admin_aria2_router,
     admin.admin_policy_router,
     admin.admin_task_router,
-    admin.admin_vas_router
+    admin.admin_vas_router,
+    slave.slave_router,
+    slave.slave_aria2_router
 ]
