@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from routers import routers
 from pkg.conf import appmeta
+from models.database import init_db
+from pkg.lifespan import lifespan
+
+lifespan.add_startup(init_db)
 
 app = FastAPI(
     title=appmeta.APP_NAME,
@@ -9,7 +13,7 @@ app = FastAPI(
     version=appmeta.BackendVersion,
     openapi_tags=appmeta.tags_meta,
     license_info=appmeta.license_info,
-    
+    lifespan=lifespan.lifespan,
 )
 
 for router in routers.Router:
