@@ -41,6 +41,15 @@ class File(BaseModel, table=True):
         ),
     )
     
+    delete_at: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(
+            DateTime,
+            nullable=True,
+            comment="删除时间",
+        ),
+    )
+    
     # 外键
     user_id: int = Field(foreign_key="users.id", index=True, description="所属用户ID")
     folder_id: int = Field(foreign_key="folders.id", index=True, description="所在目录ID")

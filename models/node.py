@@ -40,6 +40,15 @@ class Node(BaseModel, table=True):
             comment="更新时间",
         ),
     )
+    
+    delete_at: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(
+            DateTime,
+            nullable=True,
+            comment="删除时间",
+        ),
+    )
 
     # 关系
     downloads: list["Download"] = Relationship(back_populates="node")

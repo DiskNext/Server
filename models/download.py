@@ -45,6 +45,15 @@ class Download(BaseModel, table=True):
         ),
     )
     
+    delete_at: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(
+            DateTime,
+            nullable=True,
+            comment="删除时间",
+        ),
+    )
+    
     # 外键
     user_id: int = Field(foreign_key="users.id", index=True, description="所属用户ID")
     task_id: Optional[int] = Field(default=None, foreign_key="tasks.id", index=True, description="关联的任务ID")

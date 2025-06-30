@@ -47,6 +47,15 @@ class Policy(BaseModel, table=True):
         ),
     )
     
+    delete_at: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(
+            DateTime,
+            nullable=True,
+            comment="删除时间",
+        ),
+    )
+    
     # 关系
     files: List["File"] = Relationship(back_populates="policy")
     folders: List["Folder"] = Relationship(back_populates="policy")

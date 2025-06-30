@@ -34,6 +34,15 @@ class Report(BaseModel, table=True):
         ),
     )
     
+    delete_at: Optional[datetime] = Field(
+        default=None,
+        sa_column=Column(
+            DateTime,
+            nullable=True,
+            comment="删除时间",
+        ),
+    )
+    
     # 外键
     share_id: int = Field(foreign_key="shares.id", index=True, description="被举报的分享ID")
     
