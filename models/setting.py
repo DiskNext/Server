@@ -99,7 +99,8 @@ class Setting(BaseModel, table=True):
 
     async def get(
         type: SETTINGS_TYPE,
-        name: str
+        name: str,
+        format: Literal['int', 'float', 'bool', 'str'] = 'str'
     ) -> Optional['Setting']:
         """
         从数据库中获取指定类型和名称的设置项。
@@ -121,8 +122,21 @@ class Setting(BaseModel, table=True):
                 Setting.name == name
             )
             
-            result = await session.exec(statment)
-            return result.one_or_none()
+            statment = await session.exec(statment)
+            result = statment.one_or_none()
+            result = result.value if result else None
+            
+            # 根据 format 参数转换结果类型
+            if format == 'int':
+                return int(result) if result is not None else None
+            elif format == 'float':
+                return float(result) if result is not None else None
+            elif format == 'bool':
+                return result.lower() in ['true', '1'] if isinstance(result, str) else bool(result)
+            elif format == 'str':
+                return str(result) if result is not None else None
+            else:
+                raise ValueError(f"Unsupported format: {format}")
     
     async def set(
         type: SETTINGS_TYPE,

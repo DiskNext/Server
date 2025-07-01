@@ -2,9 +2,11 @@ from fastapi import FastAPI
 from routers import routers
 from pkg.conf import appmeta
 from models.database import init_db
+from models.migration import init_default_settings
 from pkg.lifespan import lifespan
 
 lifespan.add_startup(init_db)
+lifespan.add_startup(init_default_settings)
 
 app = FastAPI(
     title=appmeta.APP_NAME,
@@ -30,4 +32,5 @@ for router in routers.Router:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app='main:app', host="0.0.0.0", port=5213, reload=True)
+    uvicorn.run(app=app, host="0.0.0.0", port=5213)
+    # uvicorn.run(app='main:app', host="0.0.0.0", port=5213, reload=True)

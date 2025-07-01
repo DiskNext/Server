@@ -101,9 +101,16 @@ Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; verti
 async def init_default_settings() -> None:
     from .setting import Setting
     
-    for setting in default_settings:
-        await Setting.add(
-            type=setting.type, 
-            name=setting.name, 
-            value=setting.value
-        )
+    try:
+        # 检查是否已经存在版本设置
+        ver = await Setting.get(type="version", name=f"db_version_{BackendVersion}")
+        if ver == "installed":
+            return
+        else: raise ValueError("Database version mismatch or not installed.")
+    except:
+        for setting in default_settings:
+            await Setting.add(
+                type=setting.type, 
+                name=setting.name, 
+                value=setting.value
+            )
