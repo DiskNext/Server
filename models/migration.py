@@ -97,3 +97,13 @@ Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; verti
     Setting(name="pwa_theme_color", value="#000000", type="pwa"),
     Setting(name="pwa_background_color", value="#ffffff", type="pwa"),
 ]
+
+async def init_default_settings() -> None:
+    from .setting import Setting
+    
+    for setting in default_settings:
+        await Setting.add(
+            type=setting.type, 
+            name=setting.name, 
+            value=setting.value
+        )

@@ -69,8 +69,14 @@ class User(BaseModel, table=True):
     previous_group_id: Optional[int] = Field(default=None, foreign_key="groups.id", description="之前的用户组ID（用于过期后恢复）")
     
     # 关系
-    group: "Group" = Relationship(back_populates="users")
-    previous_group: Optional["Group"] = Relationship(back_populates="previous_users")
+    group: "Group" = Relationship(
+        back_populates="users",
+        sa_relationship_kwargs={"foreign_keys": "User.group_id"}
+    )
+    previous_group: Optional["Group"] = Relationship(
+        back_populates="previous_users",
+        sa_relationship_kwargs={"foreign_keys": "User.previous_group_id"}
+    )
     
     downloads: list["Download"] = Relationship(back_populates="user")
     files: list["File"] = Relationship(back_populates="user")
