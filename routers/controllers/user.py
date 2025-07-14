@@ -25,7 +25,7 @@ def router_user_session() -> ResponseModel:
     Returns:
         dict: A dictionary containing user session information.
     """
-    ...
+    pass
 
 @user_router.post(
     path='/',
@@ -39,7 +39,7 @@ def router_user_register() -> ResponseModel:
     Returns:
         dict: A dictionary containing user registration information.
     """
-    ...
+    pass
 
 @user_router.post(
     path='/2fa',
@@ -53,7 +53,7 @@ def router_user_2fa() -> ResponseModel:
     Returns:
         dict: A dictionary containing two-factor authentication information.
     """
-    ...
+    pass
 
 @user_router.post(
     path='/reset',
@@ -67,7 +67,7 @@ def router_user_reset() -> ResponseModel:
     Returns:
         dict: A dictionary containing information about the password reset email.
     """
-    ...
+    pass
 
 @user_router.patch(
     path='/reset',
@@ -81,7 +81,7 @@ def router_user_reset_patch() -> ResponseModel:
     Returns:
         dict: A dictionary containing information about the password reset.
     """
-    ...
+    pass
 
 @user_router.get(
     path='/qq',
@@ -95,7 +95,7 @@ def router_user_qq() -> ResponseModel:
     Returns:
         dict: A dictionary containing QQ login initialization information.
     """
-    ...
+    pass
 
 @user_router.get(
     path='/activate/{id}',
@@ -112,7 +112,7 @@ def router_user_activate(id: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing activation information.
     """
-    ...
+    pass
 
 @user_router.get(
     path='authn/{username}',
@@ -129,7 +129,7 @@ def router_user_authn(username: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing WebAuthn initialization information.
     """
-    ...
+    pass
 
 @user_router.post(
     path='authn/finish/{username}',
@@ -146,7 +146,7 @@ def router_user_authn_finish(username: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing WebAuthn login information.
     """
-    ...
+    pass
 
 @user_router.get(
     path='/profile/{id}',
@@ -163,7 +163,7 @@ def router_user_profile(id: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing user profile information.
     """
-    ...
+    pass
 
 @user_router.get(
     path='/avatar/{id}/{size}',
@@ -181,7 +181,7 @@ def router_user_avatar(id: str, size: int = 128) -> ResponseModel:
     Returns:
         str: A Base64 encoded string of the user avatar image.
     """
-    ...
+    pass
 
 #####################
 # 需要登录的接口
@@ -200,7 +200,7 @@ def router_user_me() -> ResponseModel:
     Returns:
         dict: A dictionary containing user information.
     """
-    ...
+    pass
 
 @user_router.get(
     path='/storage',
@@ -215,7 +215,7 @@ def router_user_storage() -> ResponseModel:
     Returns:
         dict: A dictionary containing user storage information.
     """
-    ...
+    pass
 
 @user_router.put(
     path='/authn/start',
@@ -230,7 +230,7 @@ def router_user_authn_start() -> ResponseModel:
     Returns:
         dict: A dictionary containing WebAuthn initialization information.
     """
-    ...
+    pass
 
 @user_router.put(
     path='/authn/finish',
@@ -245,7 +245,7 @@ def router_user_authn_finish() -> ResponseModel:
     Returns:
         dict: A dictionary containing WebAuthn login information.
     """
-    ...
+    pass
 
 @user_settings_router.get(
     path='/policies',
@@ -259,7 +259,7 @@ def router_user_settings_policies() -> ResponseModel:
     Returns:
         dict: A dictionary containing available storage policies for the user.
     """
-    ...
+    pass
 
 @user_settings_router.get(
     path='/nodes',
@@ -274,7 +274,7 @@ def router_user_settings_nodes() -> ResponseModel:
     Returns:
         dict: A dictionary containing available nodes for the user.
     """
-    ...
+    pass
 
 @user_settings_router.get(
     path='/tasks',
@@ -289,7 +289,7 @@ def router_user_settings_tasks() -> ResponseModel:
     Returns:
         dict: A dictionary containing the user's task queue information.
     """
-    ...
+    pass
 
 @user_settings_router.get(
     path='/',
@@ -304,7 +304,7 @@ def router_user_settings() -> ResponseModel:
     Returns:
         dict: A dictionary containing the user's current settings.
     """
-    ...
+    pass
 
 @user_settings_router.post(
     path='/avatar',
@@ -319,7 +319,7 @@ def router_user_settings_avatar() -> ResponseModel:
     Returns:
         dict: A dictionary containing the result of the avatar upload.
     """
-    ...
+    pass
 
 @user_settings_router.put(
     path='/avatar',
@@ -334,7 +334,7 @@ def router_user_settings_avatar_gravatar() -> ResponseModel:
     Returns:
         dict: A dictionary containing the result of setting the Gravatar avatar.
     """
-    ...
+    pass
 
 @user_settings_router.patch(
     path='/{option}',
@@ -352,7 +352,7 @@ def router_user_settings_patch(option: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing the result of the settings update.
     """
-    ...
+    pass
 
 @user_settings_router.get(
     path='/2fa',
@@ -367,4 +367,4 @@ def router_user_settings_2fa() -> ResponseModel:
     Returns:
         dict: A dictionary containing two-factor authentication setup information.
     """
-    ...
+    pass

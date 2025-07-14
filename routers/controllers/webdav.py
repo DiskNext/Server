@@ -21,7 +21,7 @@ def router_webdav_accounts() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the account information.
     """
-    ...
+    pass
 
 @webdav_router.post(
     path='/accounts',
@@ -36,7 +36,7 @@ def router_webdav_create_account() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the created account.
     """
-    ...
+    pass
 
 @webdav_router.delete(
     path='/accounts/{id}',
@@ -54,7 +54,7 @@ def router_webdav_delete_account(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the deletion operation.
     """
-    ...
+    pass
 
 @webdav_router.post(
     path='/mount',
@@ -69,7 +69,7 @@ def router_webdav_create_mount() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the created mount point.
     """
-    ...
+    pass
 
 @webdav_router.delete(
     path='/mount/{id}',
@@ -87,7 +87,7 @@ def router_webdav_delete_mount(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the deletion operation.
     """
-    ...
+    pass
 
 @webdav_router.patch(
     path='accounts/{id}',
@@ -105,4 +105,4 @@ def router_webdav_update_account(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the updated account.
     """
-    ...
+    pass

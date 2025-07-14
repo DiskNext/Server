@@ -8,7 +8,7 @@ async def AuthRequired(
     '''
     AuthRequired 需要登录
     '''
-    return True
+    from models.user import User
 
 async def SignRequired(
     token: Annotated[str, Depends(jwt.oauth2_scheme)]
@@ -27,4 +27,4 @@ async def AdminRequired(
     使用方法：
     >>> APIRouter(dependencies=[Depends(is_admin)])
     '''
-    ...
+    pass

@@ -20,7 +20,7 @@ def router_object_delete() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the object deletion.
     """
-    ...
+    pass
 
 @object_router.patch(
     path='/',
@@ -35,7 +35,7 @@ def router_object_move() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the object move.
     """
-    ...
+    pass
 
 @object_router.post(
     path='/copy',
@@ -50,7 +50,7 @@ def router_object_copy() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the object copy.
     """
-    ...
+    pass
 
 @object_router.post(
     path='/rename',
@@ -65,7 +65,7 @@ def router_object_rename() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the object rename.
     """
-    ...
+    pass
 
 @object_router.get(
     path='/property/{id}',
@@ -83,4 +83,4 @@ def router_object_property(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the object properties.
     """
-    ...
+    pass

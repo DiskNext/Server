@@ -87,3 +87,24 @@ class User(BaseModel, table=True):
     tags: list["Tag"] = Relationship(back_populates="user")
     tasks: list["Task"] = Relationship(back_populates="user")
     webdavs: list["WebDAV"] = Relationship(back_populates="user")
+    
+    async def create(
+        user: "User"
+    ):
+        """
+        向数据库内添加用户。
+        
+        :param user: User 实例
+        :type user: User
+        """
+        from .database import get_session
+        
+        async for session in get_session():
+            try:
+                session.add(user)
+                await session.commit()
+                await session.refresh(user)
+            except Exception as e:
+                await session.rollback()
+                raise e
+        return user

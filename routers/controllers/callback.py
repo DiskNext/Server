@@ -39,7 +39,7 @@ def router_callback_qq() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the QQ OAuth callback.
     """
-    ...
+    pass
 
 @oauth_router.post(
     path='/github',
@@ -53,7 +53,7 @@ def router_callback_github() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the GitHub OAuth callback.
     """
-    ...
+    pass
 
 @pay_router.post(
     path='/alipay',
@@ -67,7 +67,7 @@ def router_callback_alipay() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the Alipay payment callback.
     """
-    ...
+    pass
 
 @pay_router.post(    
     path='/wechat',
@@ -81,7 +81,7 @@ def router_callback_wechat() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the WeChat Pay payment callback.
     """
-    ...
+    pass
 
 @pay_router.post(
     path='/stripe',
@@ -95,7 +95,7 @@ def router_callback_stripe() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the Stripe payment callback.
     """
-    ...
+    pass
 
 @pay_router.get(
     path='/easypay',
@@ -109,7 +109,7 @@ def router_callback_easypay() -> PlainTextResponse:
     Returns:
         PlainTextResponse: A response containing the payment status for the EasyPay payment callback.
     """
-    ...
+    pass
     # return PlainTextResponse("success", status_code=200)
 
 @pay_router.get(
@@ -128,7 +128,7 @@ def router_callback_custom(order_no: str, id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the custom payment callback.
     """
-    ...
+    pass
 
 @upload_router.post(
     path='/remote/{session_id}/{key}',
@@ -146,7 +146,7 @@ def router_callback_remote(session_id: str, key: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the remote upload callback.
     """
-    ...
+    pass
 
 @upload_router.post(
     path='/qiniu/{session_id}',
@@ -163,7 +163,7 @@ def router_callback_qiniu(session_id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the Qiniu Cloud upload callback.
     """
-    ...
+    pass
     
 @upload_router.post(
     path='/tencent/{session_id}',
@@ -180,7 +180,7 @@ def router_callback_tencent(session_id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the Tencent Cloud upload callback.
     """
-    ...
+    pass
 
 @upload_router.post(    
     path='/aliyun/{session_id}',
@@ -197,7 +197,7 @@ def router_callback_aliyun(session_id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the Aliyun upload callback.
     """
-    ...
+    pass
 
 @upload_router.post(   
     path='/upyun/{session_id}',
@@ -214,7 +214,7 @@ def router_callback_upyun(session_id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the Upyun upload callback.
     """
-    ...
+    pass
 
 @upload_router.post(
     path='/aws/{session_id}',
@@ -231,7 +231,7 @@ def router_callback_aws(session_id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the AWS S3 upload callback.
     """
-    ...
+    pass
 
 @upload_router.post(
     path='/onedrive/finish/{session_id}',
@@ -248,7 +248,7 @@ def router_callback_onedrive_finish(session_id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the OneDrive upload completion callback.
     """
-    ...
+    pass
 
 @upload_router.get(
     path='/ondrive/auth',
@@ -262,7 +262,7 @@ def router_callback_onedrive_auth() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the OneDrive authorization callback.
     """
-    ...
+    pass
 
 @upload_router.get(
     path='/google/auth',
@@ -276,4 +276,4 @@ def router_callback_google_auth() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the Google OAuth completion callback.
     """
-    ...
+    pass

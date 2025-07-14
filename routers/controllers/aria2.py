@@ -20,7 +20,7 @@ def router_aria2_url() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the URL download task.
     """
-    ...
+    pass
 
 @aria2_router.post(
     path='/torrent/{id}',
@@ -38,7 +38,7 @@ def router_aria2_torrent(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the torrent download task.
     """
-    ...
+    pass
 
 @aria2_router.put(
     path='/select/{gid}',
@@ -56,7 +56,7 @@ def router_aria2_select(gid: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the re-selection of files.
     """
-    ...
+    pass
 
 @aria2_router.delete(
     path='/task/{gid}',
@@ -74,7 +74,7 @@ def router_aria2_delete(gid: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the deletion of the download task.
     """
-    ...
+    pass
 
 @aria2_router.get(
     '/downloading',
@@ -89,7 +89,7 @@ def router_aria2_downloading() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for currently downloading tasks.
     """
-    ...
+    pass
 
 @aria2_router.get(
     path='/finished',
@@ -104,4 +104,4 @@ def router_aria2_finished() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for finished tasks.
     """
-    ...
+    pass

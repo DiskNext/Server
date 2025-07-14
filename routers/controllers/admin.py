@@ -70,7 +70,7 @@ def router_admin_get_summary() -> ResponseModel:
     Returns:
         ResponseModel: 包含站点概况信息的响应模型。
     """
-    ...
+    pass
 
 @admin_router.get(
     path='/news',
@@ -85,7 +85,7 @@ def router_admin_get_news() -> ResponseModel:
     Returns:
         ResponseModel: 包含社区新闻信息的响应模型。
     """
-    ...
+    pass
 
 @admin_router.patch(
     path='/settings',
@@ -100,7 +100,7 @@ def router_admin_update_settings() -> ResponseModel:
     Returns:
         ResponseModel: 包含更新结果的响应模型。
     """
-    ...
+    pass
 
 @admin_router.get(
     path='/settings',
@@ -115,7 +115,7 @@ def router_admin_get_settings() -> ResponseModel:
     Returns:
         ResponseModel: 包含站点设置的响应模型。
     """
-    ...
+    pass
 
 @admin_group_router.get(
     path='/',
@@ -130,7 +130,7 @@ def router_admin_get_groups() -> ResponseModel:
     Returns:
         ResponseModel: 包含用户组列表的响应模型。
     """
-    ...
+    pass
 
 @admin_group_router.get(
     path='/{group_id}',
@@ -148,7 +148,7 @@ def router_admin_get_group(group_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含用户组信息的响应模型。
     """
-    ...
+    pass
 
 @admin_group_router.get(
     path='/list/{group_id}',
@@ -172,7 +172,7 @@ def router_admin_get_group_members(
     Returns:
         ResponseModel: 包含用户组成员列表的响应模型。
     """
-    ...
+    pass
 
 @admin_group_router.post(
     path='/',
@@ -187,7 +187,7 @@ def router_admin_create_group() -> ResponseModel:
     Returns:
         ResponseModel: 包含创建结果的响应模型。
     """
-    ...
+    pass
 
 @admin_group_router.patch(
     path='/{group_id}',
@@ -205,7 +205,7 @@ def router_admin_update_group(group_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含更新结果的响应模型。
     """
-    ...
+    pass
 
 @admin_group_router.delete(
     path='/{group_id}',
@@ -223,7 +223,7 @@ def router_admin_delete_group(group_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含删除结果的响应模型。
     """
-    ...
+    pass
 
 @admin_user_router.get(
     path='/info/{user_id}',
@@ -241,7 +241,7 @@ def router_admin_get_user(user_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含用户信息的响应模型。
     """
-    ...
+    pass
 
 @admin_user_router.get(
     path='/list',
@@ -263,7 +263,7 @@ def router_admin_get_users(
     Returns:
         ResponseModel: 包含用户列表的响应模型。
     """
-    ...
+    pass
 
 @admin_user_router.post(
     path='/create',
@@ -278,7 +278,7 @@ def router_admin_create_user() -> ResponseModel:
     Returns:
         ResponseModel: 包含创建结果的响应模型。
     """
-    ...
+    pass
 
 @admin_user_router.patch(
     path='/{user_id}',
@@ -296,7 +296,7 @@ def router_admin_update_user(user_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含更新结果的响应模型。
     """
-    ...
+    pass
 
 @admin_user_router.delete(
     path='/{user_id}',
@@ -314,7 +314,7 @@ def router_admin_delete_user(user_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含删除结果的响应模型。
     """
-    ...
+    pass
 
 @admin_user_router.post(
     path='/calibrate/{user_id}',
@@ -323,7 +323,7 @@ def router_admin_delete_user(user_id: int) -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_admin_calibrate_storage():
-    ...
+    pass
 
 @admin_file_router.get(
     path='/list',
@@ -338,7 +338,7 @@ def router_admin_get_file_list() -> ResponseModel:
     Returns:
         ResponseModel: 包含文件列表的响应模型。
     """
-    ...
+    pass
 
 @admin_file_router.get(
     path='/preview/{file_id}',
@@ -356,7 +356,7 @@ def router_admin_preview_file(file_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含文件预览内容的响应模型。
     """
-    ...
+    pass
 
 @admin_file_router.patch(
     path='/ban/{file_id}',
@@ -376,7 +376,7 @@ def router_admin_ban_file(file_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含删除结果的响应模型。
     """
-    ...
+    pass
 
 @admin_file_router.delete(
     path='/{file_id}',
@@ -394,7 +394,7 @@ def router_admin_delete_file(file_id: int) -> ResponseModel:
     Returns:
         ResponseModel: 包含删除结果的响应模型。
     """
-    ...
+    pass
 
 @admin_aria2_router.post(
     path='/test',
@@ -403,7 +403,7 @@ def router_admin_delete_file(file_id: int) -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_admin_aira2_test() -> ResponseModel:
-    ...
+    pass
 
 @admin_policy_router.get(
     path='/list',
@@ -412,7 +412,7 @@ def router_admin_aira2_test() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_list() -> ResponseModel:
-    ...
+    pass
 
 @admin_policy_router.post(
     path='/test/path',
@@ -421,7 +421,7 @@ def router_policy_list() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_test_path() -> ResponseModel:
-    ...
+    pass
 
 @admin_policy_router.post(
     path='/test/slave',
@@ -430,7 +430,7 @@ def router_policy_test_path() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_test_slave() -> ResponseModel:
-    ...
+    pass
 
 @admin_policy_router.post(
     path='/',
@@ -439,7 +439,7 @@ def router_policy_test_slave() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_add_policy() -> ResponseModel:
-    ...
+    pass
 
 @admin_policy_router.post(
     path='/cors',
@@ -448,7 +448,7 @@ def router_policy_add_policy() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_add_cors() -> ResponseModel:
-    ...
+    pass
 
 @admin_policy_router.post(
     path='/scf',
@@ -457,7 +457,7 @@ def router_policy_add_cors() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_add_scf() -> ResponseModel:
-    ...
+    pass
     
 @admin_policy_router.get(
     path='/{id}/oauth',
@@ -466,7 +466,7 @@ def router_policy_add_scf() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_onddrive_oauth() -> ResponseModel:
-    ...
+    pass
 
 @admin_policy_router.get(
     path='/{id}',
@@ -475,7 +475,7 @@ def router_policy_onddrive_oauth() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_get_policy() -> ResponseModel:
-    ...
+    pass
 
 @admin_policy_router.delete(
     path='/{id}',
@@ -484,4 +484,4 @@ def router_policy_get_policy() -> ResponseModel:
     dependencies=[Depends(AdminRequired)]
 )
 def router_policy_delete_policy() -> ResponseModel:
-    ...
+    pass

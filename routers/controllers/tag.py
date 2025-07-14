@@ -20,7 +20,7 @@ def router_tag_create_filter() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the created tag.
     """
-    ...
+    pass
 
 @tag_router.post(
     path='/link',
@@ -35,7 +35,7 @@ def router_tag_create_link() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the created tag.
     """
-    ...
+    pass
 
 @tag_router.delete(
     path='/{id}',
@@ -53,4 +53,4 @@ def router_tag_delete(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the deletion operation.
     """
-    ...
+    pass

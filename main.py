@@ -4,10 +4,14 @@ from pkg.conf import appmeta
 from models.database import init_db
 from models.migration import init_default_settings
 from pkg.lifespan import lifespan
+from pkg.JWT import jwt
 
+# 添加初始化数据库启动项
 lifespan.add_startup(init_db)
 lifespan.add_startup(init_default_settings)
+lifespan.add_startup(jwt.load_secret_key)
 
+# 创建应用实例并设置元数据
 app = FastAPI(
     title=appmeta.APP_NAME,
     summary=appmeta.summary,
@@ -18,6 +22,7 @@ app = FastAPI(
     lifespan=lifespan.lifespan,
 )
 
+# 挂载路由
 for router in routers.Router:
     app.include_router(
         router,
@@ -30,7 +35,8 @@ for router in routers.Router:
             500: {"description": "内部服务器错误 Internal server error"}
         },)
 
+# 启动时打印欢迎信息
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app=app, host="0.0.0.0", port=5213)
-    # uvicorn.run(app='main:app', host="0.0.0.0", port=5213, reload=True)
+    # uvicorn.run(app=app, host="0.0.0.0", port=5213) # 生产环境
+    uvicorn.run(app='main:app', host="0.0.0.0", port=5213, reload=True) # 开发环境

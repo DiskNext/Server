@@ -20,7 +20,7 @@ def router_vas_pack() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for storage packs and quotas.
     """
-    ...
+    pass
 
 @vas_router.get(
     path='/product',
@@ -35,7 +35,7 @@ def router_vas_product() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for products and payment information.
     """
-    ...
+    pass
 
 @vas_router.post(
     path='/order',
@@ -50,7 +50,7 @@ def router_vas_order() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the created order.
     """
-    ...
+    pass
 
 @vas_router.get(
     path='/order/{id}',
@@ -68,7 +68,7 @@ def router_vas_order_get(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the specified order.
     """
-    ...
+    pass
 
 @vas_router.get(
     path='/redeem',
@@ -86,7 +86,7 @@ def router_vas_redeem(code: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the specified redemption code.
     """
-    ...
+    pass
 
 @vas_router.post(
     path='/redeem',
@@ -101,4 +101,4 @@ def router_vas_redeem_post() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the redeemed code.
     """
-    ...
+    pass

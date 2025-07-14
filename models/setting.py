@@ -71,6 +71,7 @@ class Setting(BaseModel, table=True):
         ),
     )
 
+    @staticmethod
     async def add(
         type: SETTINGS_TYPE = None,
         name: str = None,
@@ -97,6 +98,7 @@ class Setting(BaseModel, table=True):
         
             await session.commit()
 
+    @staticmethod
     async def get(
         type: SETTINGS_TYPE,
         name: str,
@@ -138,6 +140,7 @@ class Setting(BaseModel, table=True):
             else:
                 raise ValueError(f"Unsupported format: {format}")
     
+    @staticmethod
     async def set(
         type: SETTINGS_TYPE,
         name: str,
@@ -177,6 +180,7 @@ class Setting(BaseModel, table=True):
             setting.value = value
             await session.commit()
     
+    @staticmethod
     async def delete(
         type: SETTINGS_TYPE,
         name: str

@@ -23,7 +23,7 @@ def router_share_get(info: str, id: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing shared content information.
     """
-    ...
+    pass
 
 @share_router.put(
     path='/download/{id}',
@@ -40,7 +40,7 @@ def router_share_download(id: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing download session information.
     """
-    ...
+    pass
 
 @share_router.get(
     path='preview/{id}',
@@ -57,7 +57,7 @@ def router_share_preview(id: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing preview information.
     """
-    ...
+    pass
 
 @share_router.get(
     path='/doc/{id}',
@@ -74,7 +74,7 @@ def router_share_doc(id: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing the document preview URL.
     """
-    ...
+    pass
 
 @share_router.get(
     path='/content/{id}',
@@ -91,7 +91,7 @@ def router_share_content(id: str) -> ResponseModel:
     Returns:
         str: The content of the text file.
     """
-    ...
+    pass
 
 @share_router.get(
     path='/list/{id}/{path:path}',
@@ -109,7 +109,7 @@ def router_share_list(id: str, path: str = '') -> ResponseModel:
     Returns:
         dict: A dictionary containing directory listing information.
     """
-    ...
+    pass
 
 @share_router.get(
     path='/search/{id}/{type}/{keywords}',
@@ -128,7 +128,7 @@ def router_share_search(id: str, type: str, keywords: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing search results.
     """
-    ...
+    pass
 
 @share_router.post(
     path='/archive/{id}',
@@ -145,7 +145,7 @@ def router_share_archive(id: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing archive download information.
     """
-    ...
+    pass
 
 @share_router.get(
     path='/readme/{id}',
@@ -162,7 +162,7 @@ def router_share_readme(id: str) -> ResponseModel:
     Returns:
         str: The content of the README file.
     """
-    ...
+    pass
 
 @share_router.get(
     path='/thumb/{id}/{file}',
@@ -180,7 +180,7 @@ def router_share_thumb(id: str, file: str) -> ResponseModel:
     Returns:
         str: A Base64 encoded string of the thumbnail image.
     """
-    ...
+    pass
 
 @share_router.post(
     path='/report/{id}',
@@ -197,7 +197,7 @@ def router_share_report(id: str) -> ResponseModel:
     Returns:
         dict: A dictionary containing report submission information.
     """
-    ...
+    pass
 
 @share_router.get(
     path='/search',
@@ -215,7 +215,7 @@ def router_share_search_public(keywords: str, type: str = 'all') -> ResponseMode
     Returns:
         dict: A dictionary containing search results for public shares.
     """
-    ...
+    pass
 
 #####################
 # 需要登录的接口
@@ -234,7 +234,7 @@ def router_share_create() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the new share creation.
     """
-    ...
+    pass
 
 @share_router.get(
     path='/',
@@ -249,7 +249,7 @@ def router_share_list() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the list of shares.
     """
-    ...
+    pass
 
 @share_router.post(
     path='/save/{id}',
@@ -267,7 +267,7 @@ def router_share_save(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the saved share.
     """
-    ...
+    pass
 
 @share_router.patch(
     path='/{id}',
@@ -285,7 +285,7 @@ def router_share_update(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the updated share.
     """
-    ...
+    pass
 
 @share_router.delete(
     path='/{id}',
@@ -303,4 +303,4 @@ def router_share_delete(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the deleted share.
     """
-    ...
+    pass

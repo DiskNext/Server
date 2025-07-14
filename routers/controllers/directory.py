@@ -20,7 +20,7 @@ def router_directory_create() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the directory creation.
     """
-    ...
+    pass
 
 @directory_router.get(
     path='/{path:path}',
@@ -38,4 +38,4 @@ def router_directory_get(path: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the directory contents.
     """
-    ...
+    pass

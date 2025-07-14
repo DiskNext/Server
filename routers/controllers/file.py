@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile
+from fastapi.responses import FileResponse
 from middleware.auth import SignRequired
 from models.response import ResponseModel
 
@@ -17,7 +18,7 @@ file_upload_router = APIRouter(
     summary='文件外链（直接输出文件数据）',
     description='Get file external link endpoint.',
 )
-def router_file_get(id: str, name: str) -> ResponseModel:
+def router_file_get(id: str, name: str) -> FileResponse:
     """
     Get file external link endpoint.
     
@@ -26,9 +27,9 @@ def router_file_get(id: str, name: str) -> ResponseModel:
         name (str): The name of the file.
     
     Returns:
-        ResponseModel: A model containing the response data for the file.
+        FileResponse: A response containing the file data.
     """
-    ...
+    pass
 
 @file_router.get(
     path='/source/{id}/{name}',
@@ -46,7 +47,7 @@ def router_file_source(id: str, name: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file with a redirect.
     """
-    ...
+    pass
 
 @file_upload_router.get(
     path='/download/{id}',
@@ -63,7 +64,7 @@ def router_file_download(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file download.
     """
-    ...
+    pass
 
 @file_upload_router.get(
     path='/archive/{sessionID}/archive.zip',
@@ -80,14 +81,14 @@ def router_file_archive_download(sessionID: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the archived files download.
     """
-    ...
+    pass
 
 @file_upload_router.post(
     path='/{sessionID}/{index}',
     summary='文件上传',
     description='File upload endpoint.',
 )
-def router_file_upload(sessionID: str, index: int) -> ResponseModel:
+def router_file_upload(sessionID: str, index: int, file: UploadFile) -> ResponseModel:
     """
     File upload endpoint.
     
@@ -98,7 +99,7 @@ def router_file_upload(sessionID: str, index: int) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data.
     """
-    ...
+    pass
 
 @file_upload_router.put(
     path='/',
@@ -113,7 +114,7 @@ def router_file_upload_session() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the upload session.
     """
-    ...
+    pass
 
 @file_upload_router.delete(
     path='/{sessionID}',
@@ -131,7 +132,7 @@ def router_file_upload_session_delete(sessionID: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the deletion.
     """
-    ...
+    pass
 
 @file_upload_router.delete(
     path='/',
@@ -146,7 +147,7 @@ def router_file_upload_session_clear() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for clearing all sessions.
     """
-    ...
+    pass
 
 @file_router.put(
     path='/update/{id}',
@@ -164,7 +165,7 @@ def router_file_update(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file update.
     """
-    ...
+    pass
 
 @file_router.post(
     path='/create',
@@ -179,7 +180,7 @@ def router_file_create() -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file creation.
     """
-    ...
+    pass
 
 @file_router.put(
     path='/download/{id}',
@@ -197,7 +198,7 @@ def router_file_download(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file download session.
     """
-    ...
+    pass
 
 @file_router.get(
     path='/preview/{id}',
@@ -215,7 +216,7 @@ def router_file_preview(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file preview.
     """
-    ...
+    pass
 
 @file_router.get(
     path='/content/{id}',
@@ -233,7 +234,7 @@ def router_file_content(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the text file content.
     """
-    ...
+    pass
 
 @file_router.get(
     path='/doc/{id}',
@@ -251,7 +252,7 @@ def router_file_doc(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the Office document preview URL.
     """
-    ...
+    pass
 
 @file_router.get(
     path='/thumb/{id}',
@@ -269,7 +270,7 @@ def router_file_thumb(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file thumbnail.
     """
-    ...
+    pass
 
 @file_router.post(
     path='/source/{id}',
@@ -287,7 +288,7 @@ def router_file_source(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file external link.
     """
-    ...
+    pass
 
 @file_router.post(
     path='/archive',
@@ -305,7 +306,7 @@ def router_file_archive(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the archived files.
     """
-    ...
+    pass
 
 @file_router.post(
     path='/compress',
@@ -323,7 +324,7 @@ def router_file_compress(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file compression task.
     """
-    ...
+    pass
 
 @file_router.post(
     path='/decompress',
@@ -341,7 +342,7 @@ def router_file_decompress(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file extraction task.
     """
-    ...
+    pass
 
 @file_router.post(
     path='/relocate',
@@ -359,7 +360,7 @@ def router_file_relocate(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file relocation task.
     """
-    ...
+    pass
 
 @file_router.get(
     path='/search/{type}/{keyword}',
@@ -378,4 +379,4 @@ def router_file_search(type: str, keyword: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the file search.
     """
-    ...
+    pass

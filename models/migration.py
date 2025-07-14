@@ -114,3 +114,54 @@ async def init_default_settings() -> None:
                 name=setting.name, 
                 value=setting.value
             )
+
+async def init_default_group() -> None:
+    from .group import Group
+    
+    try:
+        # 未找到初始管理组时，则创建
+        if not Group.get(id=1):
+            Group.add(
+                name="管理员",
+                max_storage=1 * 1024 * 1024 * 1024,  # 1GB
+                share_enabled=True,
+                web_dav_enabled=True,
+                options={
+                    "ArchiveDownload": True,
+                    "ArchiveTask": True,
+                    "ShareDownload": True,
+                    "Aria2": True,
+                }
+            )
+    except Exception as e:
+        raise RuntimeError(f"无法创建管理员用户组: {e}") from e
+
+    try:
+        # 未找到初始注册会员时，则创建
+        if not Group.get(id=2):
+            Group.add(
+                name="注册会员",
+                max_storage=1 * 1024 * 1024 * 1024,  # 1GB
+                share_enabled=True,
+                web_dav_enabled=True,
+                options={
+                    "ShareDownload": True,
+                }
+            )
+    except Exception as e:
+        raise RuntimeError(f"无法创建初始注册会员用户组: {e}") from e
+    
+    try:
+        # 未找到初始游客组时，则创建
+        if not Group.get(id=3):
+            Group.add(
+                name="游客",
+                policies="[]",
+                share_enabled=False,
+                web_dav_enabled=False,
+                options={
+                    "ShareDownload": True,
+                }
+            )
+    except Exception as e:
+        raise RuntimeError(f"无法创建初始游客用户组: {e}") from e

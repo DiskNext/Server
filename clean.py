@@ -69,7 +69,7 @@ def get_excluded_dirs(exclude_arg: str) -> Set[str]:
 
 def clean_pycache(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False) -> List[str]:
     """清理 __pycache__ 目录"""
-    log.info("开始清理 __pycache__ 目录...")
+    log.info("开始清理 __pycache__ 目录pass")
     cleaned_paths = []
     
     for dirpath, dirnames, _ in os.walk(root_dir):
@@ -90,7 +90,7 @@ def clean_pycache(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False) 
 
 def clean_pyc_files(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False) -> List[str]:
     """清理 .pyc 文件"""
-    log.info("开始清理 .pyc 文件...")
+    log.info("开始清理 .pyc 文件pass")
     cleaned_files = []
     
     for dirpath, dirnames, filenames in os.walk(root_dir):
@@ -112,7 +112,7 @@ def clean_pyc_files(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False
 
 def clean_pytest_cache(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False) -> List[str]:
     """清理 .pytest_cache 目录"""
-    log.info("开始清理 .pytest_cache 目录...")
+    log.info("开始清理 .pytest_cache 目录pass")
     cleaned_paths = []
     
     for dirpath, dirnames, _ in os.walk(root_dir):
@@ -133,7 +133,7 @@ def clean_pytest_cache(root_dir: str, exclude_dirs: Set[str], dry_run: bool = Fa
 
 def clean_nicegui(root_dir: str, dry_run: bool = False) -> Tuple[bool, str]:
     """清理 .nicegui 目录"""
-    log.info("开始清理 .nicegui 目录...")
+    log.info("开始清理 .nicegui 目录pass")
     nicegui_dir = os.path.join(root_dir, ".nicegui")
     if os.path.exists(nicegui_dir) and os.path.isdir(nicegui_dir):
         success, error = safe_remove(nicegui_dir, dry_run)
@@ -146,7 +146,7 @@ def clean_nicegui(root_dir: str, dry_run: bool = False) -> Tuple[bool, str]:
 
 def clean_testdb(root_dir: str, dry_run: bool = False) -> Tuple[bool, str, str]:
     """清理测试数据库文件"""
-    log.info("开始清理 test.db 文件...")
+    log.info("开始清理 test.db 文件pass")
     test_db = os.path.join(root_dir, "test.db")
     if os.path.exists(test_db) and os.path.isfile(test_db):
         success, error = safe_remove(test_db, dry_run)

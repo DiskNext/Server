@@ -34,7 +34,7 @@ def router_site_captcha():
     Returns:
         str: A Base64 encoded string of the captcha image.
     """
-    ...
+    pass
     
 @site_router.get(
     path='/config',

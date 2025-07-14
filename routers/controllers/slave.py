@@ -44,7 +44,7 @@ def router_slave_post(data: str) -> ResponseModel:
     Returns:
         ResponseModel: A response model indicating success.
     """
-    ...
+    pass
 
 @slave_router.get(
     path='/get/{speed}/{path}/{name}',
@@ -62,7 +62,7 @@ def router_slave_download(speed: int, path: str, name: str) -> ResponseModel:
     Returns:
         ResponseModel: A response model containing download information.
     """
-    ...
+    pass
 
 @slave_router.get(
     path='/download/{sign}',
@@ -80,7 +80,7 @@ def router_slave_download_by_sign(sign: str) -> FileResponse:
     Returns:
         FileResponse: A response containing the file to be downloaded.
     """
-    ...
+    pass
 
 @slave_router.get(
     path='/source/{speed}/{path}/{name}',
@@ -100,7 +100,7 @@ def router_slave_source(speed: int, path: str, name: str) -> ResponseModel:
     Returns:
         ResponseModel: A response model containing the external link for the file.
     """
-    ...
+    pass
 
 @slave_router.get(
     path='/source/{sign}',
@@ -118,7 +118,7 @@ def router_slave_source_by_sign(sign: str) -> FileResponse:
     Returns:
         FileResponse: A response containing the file to be retrieved.
     """
-    ...
+    pass
 
 @slave_router.get(
     path='/thumb/{id}',
@@ -136,7 +136,7 @@ def router_slave_thumb(id: str) -> ResponseModel:
     Returns:
         ResponseModel: A response model containing the Base64 encoded thumbnail image.
     """
-    ...
+    pass
 
 @slave_router.delete(
     path='/delete',
@@ -154,7 +154,7 @@ def router_slave_delete(path: str) -> ResponseModel:
     Returns:
         ResponseModel: A response model indicating success or failure of the deletion.
     """
-    ...
+    pass
 
 @slave_aria2_router.post(
     path='/test',
@@ -166,7 +166,7 @@ def router_slave_aria2_test() -> ResponseModel:
     """
     Test the connection to the Aria2 service from the slave.
     """
-    ...
+    pass
 
 @slave_aria2_router.get(
     path='/get/{gid}',
@@ -184,7 +184,7 @@ def router_slave_aria2_get(gid: str = None) -> ResponseModel:
     Returns:
         ResponseModel: A response model containing the task information.
     """
-    ...
+    pass
 
 @slave_aria2_router.post(
     path='/add',
@@ -204,7 +204,7 @@ def router_slave_aria2_add(gid: str, url: str, options: dict = None) -> Response
     Returns:
         ResponseModel: A response model indicating success or failure of the task addition.
     """
-    ...
+    pass
 
 @slave_aria2_router.delete(
     path='/remove/{gid}',
@@ -222,4 +222,4 @@ def router_slave_aria2_remove(gid: str) -> ResponseModel:
     Returns:
         ResponseModel: A response model indicating success or failure of the task removal.
     """
-    ...
+    pass
