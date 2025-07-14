@@ -27,3 +27,13 @@ async def test_user_curd():
     assert created_user.email == 'test_user'
     assert created_user.password == 'test_password'
     assert created_user.group_id == created_group.id
+    
+    # 测试查 Read
+    fetched_user = await User.get(id=created_user.id)
+    
+    assert fetched_user is not None
+    assert fetched_user.email == 'test_user'
+    assert fetched_user.password == 'test_password'
+    assert fetched_user.group_id == created_group.id
+    
+    # 测试改 Update
