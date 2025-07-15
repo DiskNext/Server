@@ -1,16 +1,17 @@
 # my_project/database.py
 
 from sqlmodel import SQLModel
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
+from pkg.conf import appmeta
 from sqlalchemy.orm import sessionmaker
 from typing import AsyncGenerator
 
-ASYNC_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+ASYNC_DATABASE_URL = appmeta.database_url
 
-engine = create_async_engine(
+engine: AsyncEngine = create_async_engine(
     ASYNC_DATABASE_URL, 
-    echo=True,
+    echo=appmeta.debug,
     connect_args={"check_same_thread": False}
         if ASYNC_DATABASE_URL.startswith("sqlite")
         else None,

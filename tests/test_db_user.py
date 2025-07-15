@@ -10,8 +10,8 @@ async def test_user_curd():
     await database.init_db(url='sqlite:///:memory:')
     
     # 新建一个测试用户组
-    test_group = Group(name='test_group')
-    created_group = await Group.create(test_group)
+    test_user_group = Group(name='test_user_group')
+    created_group = await Group.create(test_user_group)
     
     test_user = User(
         email='test_user',
@@ -37,3 +37,18 @@ async def test_user_curd():
     assert fetched_user.group_id == created_group.id
     
     # 测试改 Update
+    updated_user = await User.update(
+        id=fetched_user.id,
+        email='updated_user',
+        password='updated_password'
+    )
+    
+    assert updated_user is not None
+    assert updated_user.email == 'updated_user'
+    assert updated_user.password == 'updated_password'
+    
+    # 测试删除 Delete
+    await User.delete(id=updated_user.id)
+    deleted_user = await User.get(id=updated_user.id)
+    
+    assert deleted_user is None

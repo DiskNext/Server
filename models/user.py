@@ -88,8 +88,20 @@ class User(BaseModel, table=True):
     tasks: list["Task"] = Relationship(back_populates="user")
     webdavs: list["WebDAV"] = Relationship(back_populates="user")
     
+    @staticmethod
     async def create(
-        user: "User"
+        user: Optional["User"] = None,
+        email: str = None,
+        nick: Optional[str] = None,
+        password: str = None,
+        status: int = 0,
+        two_factor: Optional[str] = None,
+        avatar: Optional[str] = None,
+        options: Optional[str] = None,
+        authn: Optional[str] = None,
+        open_id: Optional[str] = None,
+        score: int = 0,
+        phone: Optional[str] = None
     ):
         """
         向数据库内添加用户。
@@ -97,18 +109,33 @@ class User(BaseModel, table=True):
         :param user: User 实例
         :type user: User
         """
+        if not user:
+            user = User(
+                email=email,
+                nick=nick,
+                password=password,
+                status=status,
+                two_factor=two_factor,
+                avatar=avatar,
+                options=options,
+                authn=authn,
+                open_id=open_id,
+                score=score,
+                phone=phone
+            )
+        
         from .database import get_session
         
         async for session in get_session():
             try:
                 session.add(user)
                 await session.commit()
-                await session.refresh(user)
             except Exception as e:
                 await session.rollback()
                 raise e
         return user
     
+    @staticmethod
     async def get(
         id: int = None,
         email: str = None
@@ -143,3 +170,99 @@ class User(BaseModel, table=True):
             user = result.one_or_none()
         
         return user
+    
+    @staticmethod
+    async def update(
+        id: int,
+        email: Optional[str] = None,
+        nick: Optional[str] = None,
+        password: Optional[str] = None,
+        status: Optional[int] = None,
+        storage: Optional[int] = None,
+        two_factor: Optional[str] = None,
+        avatar: Optional[str] = None,
+        options: Optional[str] = None,
+        authn: Optional[str] = None,
+        open_id: Optional[str] = None,
+        score: Optional[int] = None,
+        group_id: Optional[int] = None
+    ) -> "User":
+        """
+        更新用户信息。
+        
+        :return: 更新后的用户对象
+        :rtype: User
+        """
+        
+        from .database import get_session
+        from sqlmodel import select
+        
+        async for session in get_session():
+            try:
+                statement = select(User).where(User.id == id)
+                result = await session.exec(statement)
+                user = result.first()
+                
+                if user is None:
+                    raise ValueError(f"User with id {id} not found.")
+                
+                if email is not None:
+                    user.email = email
+                if nick is not None:
+                    user.nick = nick
+                if password is not None:
+                    user.password = password
+                if status is not None:
+                    user.status = status
+                if storage is not None:
+                    user.storage = storage
+                if two_factor is not None:
+                    user.two_factor = two_factor
+                if avatar is not None:
+                    user.avatar = avatar
+                if options is not None:
+                    user.options = options
+                if authn is not None:
+                    user.authn = authn
+                if open_id is not None:
+                    user.open_id = open_id
+                if score is not None:
+                    user.score = score
+                if group_id is not None:
+                    user.group_id = group_id
+
+                await session.commit()
+                await session.refresh(user)
+                return user
+            except Exception as e:
+                await session.rollback()
+                raise e
+    
+    @staticmethod
+    async def delete(
+        id: int
+    ) -> None:
+        """
+        删除用户。
+        
+        :param id: 用户ID
+        :type id: int
+        """
+        
+        from .database import get_session
+        from sqlmodel import select
+        
+        async for session in get_session():
+            try:
+                statement = select(User).where(User.id == id)
+                result = await session.exec(statement)
+                user = result.one_or_none()
+                
+                if user is None:
+                    raise ValueError(f"User with id {id} not found.")
+                
+                await session.delete(user)
+                await session.commit()
+            except Exception as e:
+                await session.rollback()
+                raise e

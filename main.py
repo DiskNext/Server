@@ -2,13 +2,13 @@ from fastapi import FastAPI
 from routers import routers
 from pkg.conf import appmeta
 from models.database import init_db
-from models.migration import init_default_settings
+from models.migration import migration
 from pkg.lifespan import lifespan
 from pkg.JWT import jwt
 
 # 添加初始化数据库启动项
 lifespan.add_startup(init_db)
-lifespan.add_startup(init_default_settings)
+lifespan.add_startup(migration)
 lifespan.add_startup(jwt.load_secret_key)
 
 # 创建应用实例并设置元数据
@@ -20,6 +20,7 @@ app = FastAPI(
     openapi_tags=appmeta.tags_meta,
     license_info=appmeta.license_info,
     lifespan=lifespan.lifespan,
+    debug=appmeta.debug,
 )
 
 # 挂载路由
@@ -38,5 +39,8 @@ for router in routers.Router:
 # 启动时打印欢迎信息
 if __name__ == "__main__":
     import uvicorn
-    # uvicorn.run(app=app, host="0.0.0.0", port=5213) # 生产环境
-    uvicorn.run(app='main:app', host="0.0.0.0", port=5213, reload=True) # 开发环境
+    
+    if appmeta.debug:
+        uvicorn.run(app='main:app', host=appmeta.host, port=appmeta.port, reload=True)
+    else:
+        uvicorn.run(app=app, host=appmeta.host, port=appmeta.port)

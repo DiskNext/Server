@@ -1,6 +1,22 @@
 from .setting import Setting
 from pkg.conf.appmeta import BackendVersion
 from pkg.password.pwd import Password
+from pkg.log import log
+
+async def migration() -> None:
+    """
+    数据库迁移函数，初始化默认设置和用户组。
+    
+    :return: None
+    """
+    
+    log.info('开始进行数据库初始化...')
+    
+    await init_default_settings()
+    await init_default_group()
+    await init_default_user()
+    
+    log.info('数据库初始化结束')
 
 default_settings: list[Setting] = [
     Setting(name="siteURL", value="http://localhost", type="basic"),
@@ -101,6 +117,8 @@ Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; verti
 async def init_default_settings() -> None:
     from .setting import Setting
     
+    log.info('初始化设置...')
+    
     try:
         # 检查是否已经存在版本设置
         ver = await Setting.get(type="version", name=f"db_version_{BackendVersion}")
@@ -118,10 +136,12 @@ async def init_default_settings() -> None:
 async def init_default_group() -> None:
     from .group import Group
     
+    log.info('初始化用户组...')
+    
     try:
         # 未找到初始管理组时，则创建
-        if not Group.get(id=1):
-            Group.add(
+        if not await Group.get(id=1):
+            await Group.create(
                 name="管理员",
                 max_storage=1 * 1024 * 1024 * 1024,  # 1GB
                 share_enabled=True,
@@ -134,12 +154,12 @@ async def init_default_group() -> None:
                 }
             )
     except Exception as e:
-        raise RuntimeError(f"无法创建管理员用户组: {e}") from e
+        raise RuntimeError(f"无法创建管理员用户组: {e}")
 
     try:
         # 未找到初始注册会员时，则创建
-        if not Group.get(id=2):
-            Group.add(
+        if not await Group.get(id=2):
+            await Group.create(
                 name="注册会员",
                 max_storage=1 * 1024 * 1024 * 1024,  # 1GB
                 share_enabled=True,
@@ -149,12 +169,12 @@ async def init_default_group() -> None:
                 }
             )
     except Exception as e:
-        raise RuntimeError(f"无法创建初始注册会员用户组: {e}") from e
+        raise RuntimeError(f"无法创建初始注册会员用户组: {e}")
     
     try:
         # 未找到初始游客组时，则创建
-        if not Group.get(id=3):
-            Group.add(
+        if not await Group.get(id=3):
+            await Group.create(
                 name="游客",
                 policies="[]",
                 share_enabled=False,
@@ -164,4 +184,40 @@ async def init_default_group() -> None:
                 }
             )
     except Exception as e:
-        raise RuntimeError(f"无法创建初始游客用户组: {e}") from e
+        raise RuntimeError(f"无法创建初始游客用户组: {e}")
+
+async def init_default_user() -> None:
+    
+    log.info('初始化管理员用户...')
+    
+    from .user import User
+    from .group import Group
+    
+    # 检查管理员用户是否存在
+    admin_user = await User.get(id=1)
+    
+    if not admin_user:
+        # 创建初始管理员用户
+        
+        # 获取管理员组
+        admin_group = await Group.get(id=1)
+        if not admin_group:
+            raise RuntimeError("管理员用户组不存在，无法创建管理员用户")
+        
+        # 生成管理员密码
+        from pkg.password.pwd import Password
+        admin_password = Password.generate(8)
+        hashed_admin_password = Password.hash(admin_password)
+        
+        admin_user = User(
+            email="admin@yxqi.cn",
+            nick="admin",
+            status=1,  # 正常状态
+            group_id=admin_group.id,
+            password=hashed_admin_password,
+            )
+        
+        admin_user = await User.create(admin_user)
+        
+        log.info(f'初始管理员账号：[bold]admin@yxqi.cn[/bold]')
+        log.info(f'初始管理员密码：[bold]{admin_password}[/bold]')
