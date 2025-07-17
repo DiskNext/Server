@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Literal, Union, Optional
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from uuid import uuid4
 
 class ResponseModel(BaseModel):
@@ -14,16 +14,35 @@ class TokenModel(BaseModel):
     access_token: str = Field(default=None, description="访问令牌")
     refresh_expires: datetime = Field(default=None, description="刷新令牌的过期时间")
     refresh_token: str = Field(default=None, description="刷新令牌")
-    
-class userModel(ResponseModel):
-    id: str = Field(default=None, description="用户ID")
+
+class groupModel(BaseModel):
+    id: int = Field(default=None, description="用户组ID")
+    name: str = Field(default=None, description="用户组名称")
+    allowShare: bool = Field(default=False, description="是否允许分享")
+    allowRomoteDownload: bool = Field(default=False, description="是否允许离线下载")
+    allowArchiveDownload: bool = Field(default=False, description="是否允许打包下载")
+    shareFree: bool = Field(default=False, description="是否允许免积分下载分享")
+    shareDownload: bool = Field(default=False, description="是否允许下载分享")
+    compress: bool = Field(default=False)
+    webdav: bool = Field(default=False, description="是否允许WebDAV")
+    allowWebDAVProxy: bool = Field(default=False, description="是否允许WebDAV代理")
+    relocate: bool = Field(default=False, description="是否使用重定向的下载链接")
+    sourceBatch: int = Field(default=0)
+    selectNode: bool = Field(default=False, description="是否允许选择离线下载节点")
+    advanceDelete: bool = Field(default=False, description="是否允许高级删除")
+
+class userModel(BaseModel):
+    id: int = Field(default=None, description="用户ID")
     username: str = Field(default=None, description="用户名")
-    email: Optional[str] = Field(default=None, description="用户邮箱")
-    avatar: Optional[str] = Field(default=None, description="用户头像URL")
-    is_active: bool = Field(default=True, description="用户是否激活")
-    is_admin: bool = Field(default=False, description="用户是否为管理员")
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="账户创建时间")
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="账户更新时间")
+    nickname: str = Field(default=None, description="用户昵称")
+    status: int = Field(default=0, description="用户状态")
+    avatar: Literal['default', 'gravatar', 'file'] = Field(default='default', description="头像类型")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="用户创建时间")
+    preferred_theme: str = Field(default="#607D8B", description="用户首选主题")
+    score: int = Field(default=0, description="用户积分")
+    anonymous: bool = Field(default=False, description="是否为匿名用户")
+    group: groupModel = Field(default_factory=None, description="用户所属用户组")
+    tags: list = Field(default_factory=list, description="用户标签列表")
     
 class SiteConfigModel(ResponseModel):
     title: str = Field(default="DiskNext", description="网站标题")

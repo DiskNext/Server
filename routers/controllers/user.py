@@ -1,9 +1,12 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from middleware.auth import SignRequired
-from models.response import ResponseModel, TokenModel
+from middleware.auth import AuthRequired, SignRequired
+import models
+from models.response import ResponseModel, TokenModel, userModel, groupModel
+from deprecated import deprecated
 from pkg.log import log
+import service.user.login
 
 user_router = APIRouter(
     prefix="/user",
@@ -24,9 +27,6 @@ user_settings_router = APIRouter(
 async def router_user_session(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> TokenModel:
-    
-    import service.user.login
-    
     username = form_data.username
     password = form_data.password
     
@@ -111,6 +111,10 @@ def router_user_qq() -> ResponseModel:
     """
     pass
 
+@deprecated(
+    version="0.0.1", 
+    reason="邮件中带链接的激活易使得被收件服务器误判为垃圾邮件，新版更换为验证码方式"
+)
 @user_router.get(
     path='/activate/{id}',
     summary='邮件激活',
@@ -205,16 +209,42 @@ def router_user_avatar(id: str, size: int = 128) -> ResponseModel:
     path='/me',
     summary='获取用户信息',
     description='Get user information.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(dependency=AuthRequired)],
+    response_model=ResponseModel,
 )
-def router_user_me() -> ResponseModel:
+async def router_user_me(
+    user: Annotated[models.user.User, Depends(AuthRequired)],
+) -> ResponseModel:
     """
     Get user information.
     
     Returns:
         dict: A dictionary containing user information.
     """
-    pass
+    
+    group = await models.Group.get(id=user.group_id)
+    
+    
+    user_group = groupModel(
+        id=group.id,
+        name=group.name,
+        allowShare=group.share_enabled,
+    )
+    
+    users = userModel(
+            id=user.id,
+            username=user.email,
+            nickname=user.nick,
+            status=user.status,
+            created_at=user.created_at,
+            score=user.score,
+            group=user_group,
+        ).model_dump()
+    
+    
+    return ResponseModel(
+        data=users
+    )
 
 @user_router.get(
     path='/storage',
