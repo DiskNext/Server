@@ -56,4 +56,4 @@ class Password:
                                       100000)
         pwdhash = binascii.hexlify(pwdhash).decode('ascii')
         
-        return pwdhash == stored_password
+        return secrets.compare_digest(pwdhash, stored_password)
