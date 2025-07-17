@@ -26,35 +26,6 @@ class Policy(BaseModel, table=True):
     file_name_rule: Optional[str] = Field(default=None, max_length=255, description="文件命名规则")
     is_origin_link_enable: bool = Field(default=False, sa_column_kwargs={"server_default": text("false")}, description="是否开启源链接访问")
     options: Optional[str] = Field(default=None, description="其他选项 (JSON格式)")
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            comment="创建时间",
-        ),
-    )
-
-    updated_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            onupdate=func.now(),
-            comment="更新时间",
-        ),
-    )
-    
-    delete_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=True,
-            comment="删除时间",
-        ),
-    )
     
     # 关系
     files: List["File"] = Relationship(back_populates="policy")

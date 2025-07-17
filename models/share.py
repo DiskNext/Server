@@ -23,35 +23,6 @@ class Share(BaseModel, table=True):
     preview_enabled: bool = Field(default=True, sa_column_kwargs={"server_default": text("true")}, description="是否允许预览")
     source_name: Optional[str] = Field(default=None, max_length=255, index=True, description="源名称（冗余字段，便于展示）")
     score: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="兑换此分享所需的积分")
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            comment="创建时间",
-        ),
-    )
-
-    updated_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            onupdate=func.now(),
-            comment="更新时间",
-        ),
-    )
-    
-    delete_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=True,
-            comment="删除时间",
-        ),
-    )
     
     # 外键
     user_id: int = Field(foreign_key="users.id", index=True, description="创建分享的用户ID")

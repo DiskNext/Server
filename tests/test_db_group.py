@@ -3,10 +3,12 @@ import pytest
 @pytest.mark.asyncio
 async def test_group_curd():
     """测试数据库的增删改查"""
-    from models import database
+    from models import database, migration
     from models.group import Group
     
     await database.init_db(url='sqlite:///:memory:')
+    
+    await migration.migration()
     
     # 测试增 Create
     test_group = Group(name='test_group')

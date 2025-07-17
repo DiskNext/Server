@@ -18,11 +18,11 @@ async def db_session():
         yield session
 
 @pytest.mark.asyncio
-async def test_initialize_db():
+async def test_migration():
     """测试数据库创建并初始化配置"""
     from models import migration
     from models import database
     
     await database.init_db(url='sqlite:///:memory:')
     
-    await migration.init_default_settings()
+    await migration.migration()

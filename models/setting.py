@@ -41,35 +41,6 @@ class Setting(BaseModel, table=True):
     type: str = Field(max_length=255, description="设置类型/分组")
     name: str = Field(max_length=255, description="设置项名称")
     value: Optional[str] = Field(default=None, description="设置值")
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            comment="创建时间",
-        ),
-    )
-
-    updated_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            onupdate=func.now(),
-            comment="更新时间",
-        ),
-    )
-    
-    delete_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=True,
-            comment="删除时间",
-        ),
-    )
 
     @staticmethod
     async def add(

@@ -20,35 +20,6 @@ class Node(BaseModel, table=True):
     aria2_enabled: bool = Field(default=False, sa_column_kwargs={"server_default": text("false")}, description="是否启用Aria2")
     aria2_options: Optional[str] = Field(default=None, description="Aria2配置 (JSON格式)")
     rank: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="节点排序权重")
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            comment="创建时间",
-        ),
-    )
-
-    updated_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            onupdate=func.now(),
-            comment="更新时间",
-        ),
-    )
-    
-    delete_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=True,
-            comment="删除时间",
-        ),
-    )
 
     # 关系
     downloads: list["Download"] = Relationship(back_populates="node")

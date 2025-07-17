@@ -24,35 +24,6 @@ class Download(BaseModel, table=True):
     attrs: Optional[str] = Field(default=None, description="额外属性 (JSON格式)")
     error: Optional[str] = Field(default=None, description="错误信息")
     dst: str = Field(description="目标存储路径")
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            comment="创建时间",
-        ),
-    )
-
-    updated_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            onupdate=func.now(),
-            comment="更新时间",
-        ),
-    )
-    
-    delete_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=True,
-            comment="删除时间",
-        ),
-    )
     
     # 外键
     user_id: int = Field(foreign_key="users.id", index=True, description="所属用户ID")

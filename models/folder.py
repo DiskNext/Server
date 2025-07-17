@@ -15,26 +15,6 @@ class Folder(BaseModel, table=True):
     __table_args__ = (UniqueConstraint("name", "parent_id", name="uq_folder_name_parent"),)
 
     name: str = Field(max_length=255, description="目录名")
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            comment="创建时间",
-        ),
-    )
-
-    updated_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            onupdate=func.now(),
-            comment="更新时间",
-        ),
-    )
     
     # 外键
     parent_id: Optional[int] = Field(default=None, foreign_key="folders.id", index=True, description="父目录ID")

@@ -20,35 +20,6 @@ class File(BaseModel, table=True):
     pic_info: Optional[str] = Field(default=None, max_length=255, description="图片信息（如尺寸）")
     upload_session_id: Optional[str] = Field(default=None, max_length=255, unique=True, index=True, description="分块上传会话ID")
     file_metadata: Optional[str] = Field(default=None, description="文件元数据 (JSON格式)")
-    created_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            comment="创建时间",
-        ),
-    )
-
-    updated_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=False,
-            server_default=func.now(),
-            onupdate=func.now(),
-            comment="更新时间",
-        ),
-    )
-    
-    delete_at: Optional[datetime] = Field(
-        default=None,
-        sa_column=Column(
-            DateTime,
-            nullable=True,
-            comment="删除时间",
-        ),
-    )
     
     # 外键
     user_id: int = Field(foreign_key="users.id", index=True, description="所属用户ID")
