@@ -10,11 +10,11 @@ from typing import AsyncGenerator
 ASYNC_DATABASE_URL = appmeta.database_url
 
 engine: AsyncEngine = create_async_engine(
-    ASYNC_DATABASE_URL, 
+    ASYNC_DATABASE_URL,
     echo=appmeta.debug,
-    connect_args={"check_same_thread": False}
-        if ASYNC_DATABASE_URL.startswith("sqlite")
-        else None,
+    connect_args={
+        "check_same_thread": False
+    } if ASYNC_DATABASE_URL.startswith("sqlite") else None,
     future=True,
     # pool_size=POOL_SIZE,
     # max_overflow=64,

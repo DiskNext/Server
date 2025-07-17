@@ -92,6 +92,7 @@ class Group(BaseModel, table=True):
             try:
                 session.add(group)
                 await session.commit()
+                await session.refresh(group)
             except Exception as e:
                 await session.rollback()
                 raise e

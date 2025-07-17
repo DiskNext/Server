@@ -212,7 +212,7 @@ async def init_default_user() -> None:
         admin_user = User(
             email="admin@yxqi.cn",
             nick="admin",
-            status=1,  # 正常状态
+            status=0,  # 正常状态
             group_id=admin_group.id,
             password=hashed_admin_password,
             )

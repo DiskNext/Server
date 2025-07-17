@@ -4,6 +4,8 @@ from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from sqlmodel import Field, Relationship, Column, func, DateTime
 from .base import BaseModel
+from .database import get_session
+from sqlmodel import select
 
 # TYPE_CHECKING 用于解决循环导入问题，只在类型检查时导入
 if TYPE_CHECKING:
@@ -130,6 +132,7 @@ class User(BaseModel, table=True):
             try:
                 session.add(user)
                 await session.commit()
+                await session.refresh(user)
             except Exception as e:
                 await session.rollback()
                 raise e
@@ -150,10 +153,6 @@ class User(BaseModel, table=True):
         :return: 用户对象或 None
         :rtype: Optional[User]
         """
-        
-        from .database import get_session
-        from sqlmodel import select
-        
         session = get_session()
         
         if id is None and email is None:
@@ -193,10 +192,6 @@ class User(BaseModel, table=True):
         :return: 更新后的用户对象
         :rtype: User
         """
-        
-        from .database import get_session
-        from sqlmodel import select
-        
         async for session in get_session():
             try:
                 statement = select(User).where(User.id == id)
@@ -248,9 +243,8 @@ class User(BaseModel, table=True):
         :param id: 用户ID
         :type id: int
         """
-        
-        from .database import get_session
-        from sqlmodel import select
+        if id == 1:
+            raise ValueError("Cannot delete the default admin user with id 1.")
         
         async for session in get_session():
             try:

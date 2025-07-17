@@ -1,6 +1,9 @@
-from fastapi import APIRouter, Depends
+from typing import Annotated
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from middleware.auth import SignRequired
-from models.response import ResponseModel
+from models.response import ResponseModel, TokenModel
+from pkg.log import log
 
 user_router = APIRouter(
     prefix="/user",
@@ -18,14 +21,25 @@ user_settings_router = APIRouter(
     summary='用户登录',
     description='User login endpoint.',
 )
-def router_user_session() -> ResponseModel:
-    """
-    User login endpoint.
+async def router_user_session(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+) -> TokenModel:
     
-    Returns:
-        dict: A dictionary containing user session information.
-    """
-    pass
+    import service.user.login
+    
+    username = form_data.username
+    password = form_data.password
+    
+    user = await service.user.login.login(username=username, password=password)
+    
+    if user is None:
+        raise HTTPException(status_code=400, detail="Invalid username or password")
+    elif user == 1:
+        raise HTTPException(status_code=400, detail="User account is not fully registered")
+    elif user == 2:
+        raise HTTPException(status_code=403, detail="User account is banned")
+    
+    return user
 
 @user_router.post(
     path='/',
