@@ -1,5 +1,6 @@
 from .setting import Setting
 from pkg.conf.appmeta import BackendVersion
+from .response import ThemeModel
 from pkg.password.pwd import Password
 from pkg.log import log
 
@@ -71,7 +72,7 @@ Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; verti
     Setting(name="hot_share_num", value="10", type="share"),
     Setting(name="gravatar_server", value="https://www.gravatar.com/", type="avatar"),
     Setting(name="defaultTheme", value="#3f51b5", type="basic"),
-    Setting(name="themes", value={"#3f51b5":{"palette":{"primary":{"main":"#3f51b5"},"secondary":{"main":"#f50057"}}},"#2196f3":{"palette":{"primary":{"main":"#2196f3"},"secondary":{"main":"#FFC107"}}},"#673AB7":{"palette":{"primary":{"main":"#673AB7"},"secondary":{"main":"#2196F3"}}},"#E91E63":{"palette":{"primary":{"main":"#E91E63"},"secondary":{"main":"#42A5F5","contrastText":"#fff"}}},"#FF5722":{"palette":{"primary":{"main":"#FF5722"},"secondary":{"main":"#3F51B5"}}},"#FFC107":{"palette":{"primary":{"main":"#FFC107"},"secondary":{"main":"#26C6DA"}}},"#8BC34A":{"palette":{"primary":{"main":"#8BC34A","contrastText":"#fff"},"secondary":{"main":"#FF8A65","contrastText":"#fff"}}},"#009688":{"palette":{"primary":{"main":"#009688"},"secondary":{"main":"#4DD0E1","contrastText":"#fff"}}},"#607D8B":{"palette":{"primary":{"main":"#607D8B"},"secondary":{"main":"#F06292"}}},"#795548":{"palette":{"primary":{"main":"#795548"},"secondary":{"main":"#4CAF50","contrastText":"#fff"}}}}, type="basic"),
+    Setting(name="themes", value=ThemeModel().model_dump(), type="basic"),
     Setting(name="aria2_token", value="", type="aria2"),
     Setting(name="aria2_rpcurl", value="", type="aria2"),
     Setting(name="aria2_temp_path", value="", type="aria2"),

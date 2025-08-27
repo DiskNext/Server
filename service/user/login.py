@@ -9,7 +9,7 @@ async def Login(
     password: str,
     captcha: Optional[str] = None,
     twoFaCode: Optional[str] = None
-) -> TokenModel | int | None:
+) -> tuple[bool, TokenModel | str]:
     """
     根据账号密码进行登录。
 
@@ -41,20 +41,20 @@ async def Login(
 
     if not user:
         log.debug(f"Cannot find user with email: {username}")
-        return None
+        return False, "User not found"
     
     # 验证密码是否正确
     if not Password.verify(user.password, password):
         log.debug(f"Password verification failed for user: {username}")
-        return None
+        return False, "Incorrect password"
     
     # 验证用户是否可登录
     if user.status == 1:
         # 未完成注册
-        return 1
+        return False, "Need to complete registration"
     elif user.status == 2:
         # 账号已被封禁
-        return 2
+        return False, "Account is banned"
     
     # 创建令牌
     from pkg.JWT.JWT import create_access_token, create_refresh_token
@@ -62,7 +62,7 @@ async def Login(
     access_token, access_expire = create_access_token(data={'sub': user.email})
     refresh_token, refresh_expire = create_refresh_token(data={'sub': user.email})
 
-    return TokenModel(
+    return True, TokenModel(
         access_token=access_token,
         access_expires=access_expire,
         refresh_token=refresh_token,

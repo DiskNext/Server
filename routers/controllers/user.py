@@ -30,18 +30,21 @@ async def router_user_session(
     username = form_data.username
     password = form_data.password
     
-    user = await service.user.Login(username=username, password=password)
+    is_login, detail = await service.user.Login(username=username, password=password)
     
-    if user is None:
-        raise HTTPException(status_code=400, detail="Invalid username or password")
-    elif user == 1:
-        raise HTTPException(status_code=400, detail="User account is not fully registered")
-    elif user == 2:
-        raise HTTPException(status_code=403, detail="User account is banned")
-    elif isinstance(user, TokenModel):
-        return user
+    if not is_login:
+        if detail in ["User not found", "Incorrect password"]:
+            raise HTTPException(status_code=400, detail="Invalid username or password")
+        elif detail == "Need to complete registration":
+            raise HTTPException(status_code=400, detail="User account is not fully registered")
+        elif detail == "Account is banned":
+            raise HTTPException(status_code=403, detail="User account is banned")
+        else:
+            raise HTTPException(status_code=500, detail="Internal server error during login")
+    if isinstance(detail, TokenModel):
+        return detail
     else:
-        log.error(f"Unexpected return type from login service: {type(user)}")
+        log.error(f"Unexpected return type from login service: {type(detail)}")
         raise HTTPException(status_code=500, detail="Internal server error during login")
 
 @user_router.post(
@@ -73,13 +76,13 @@ def router_user_2fa() -> ResponseModel:
     pass
 
 @user_router.post(
-    path='/reset',
-    summary='发送密码重设邮件',
-    description='Send a password reset email.',
+    path='/code',
+    summary='发送验证码邮件',
+    description='Send a verification code email.',
 )
-def router_user_reset() -> ResponseModel:
+def router_user_email_code() -> ResponseModel:
     """
-    Send a password reset email.
+    Send a pas
     
     Returns:
         dict: A dictionary containing information about the password reset email.
@@ -115,27 +118,6 @@ def router_user_qq() -> ResponseModel:
     
     Returns:
         dict: A dictionary containing QQ login initialization information.
-    """
-    pass
-
-@deprecated(
-    version="0.0.1", 
-    reason="邮件中带链接的激活易使得被收件服务器误判为垃圾邮件，新版更换为验证码方式"
-)
-@user_router.get(
-    path='/activate/{id}',
-    summary='邮件激活',
-    description='Activate user account via email link.',
-)
-def router_user_activate(id: str) -> ResponseModel:
-    """
-    Activate user account via email link.
-    
-    Args:
-        id (str): The activation ID from the email link.
-    
-    Returns:
-        dict: A dictionary containing activation information.
     """
     pass
 

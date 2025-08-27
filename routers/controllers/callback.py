@@ -51,48 +51,6 @@ async def router_callback_github(
     code: str = Query(description="The token received from GitHub for authentication.")) -> PlainTextResponse:
     """
     GitHub OAuth 回调处理
-    
-    - Github 成功响应：
-        - JWT: {"access_token": "gho_xxxxxxxx", "token_type": "bearer", "scope": ""}
-        - User Info:{
-            "code": "grfessg1312432313421fdgs",
-            "user_data": {
-                "login": "Yuerchu",
-                "id": 114514,
-                "node_id": "xxxxx",
-                "avatar_url": "https://avatars.githubusercontent.com/u/114514?v=4",
-                "gravatar_id": "",
-                "url": "https://api.github.com/users/Yuerchu",
-                "html_url": "https://github.com/Yuerchu",
-                "followers_url": "https://api.github.com/users/Yuerchu/followers",
-                "following_url": "https://api.github.com/users/Yuerchu/following{/other_user}",
-                "gists_url": "https://api.github.com/users/Yuerchu/gists{/gist_id}",
-                "starred_url": "https://api.github.com/users/Yuerchu/starred{/owner}{/repo}",
-                "subscriptions_url": "https://api.github.com/users/Yuerchu/subscriptions",
-                "organizations_url": "https://api.github.com/users/Yuerchu/orgs",
-                "repos_url": "https://api.github.com/users/Yuerchu/repos",
-                "events_url": "https://api.github.com/users/Yuerchu/events{/privacy}",
-                "received_events_url": "https://api.github.com/users/Yuerchu/received_events",
-                "type": "User",
-                "user_view_type": "public",
-                "site_admin": false,
-                "name": "于小丘",
-                "company": null,
-                "blog": "https://www.yxqi.cn",
-                "location": "ChangSha, HuNan, China",
-                "email": "admin@yuxiaoqiu.cn",
-                "hireable": null,
-                "bio": null,
-                "twitter_username": null,
-                "notification_email": "admin@yuxiaoqiu.cn",
-                "public_repos": 17,
-                "public_gists": 0,
-                "followers": 8,
-                "following": 8,
-                "created_at": "2019-04-13T11:17:33Z",
-                "updated_at": "2025-08-20T03:03:16Z"
-                }
-            }
     - 错误响应示例：
         - {
             'error': 'bad_verification_code', 
