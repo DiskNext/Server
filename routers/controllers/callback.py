@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
-from fastapi.responses import PlainTextResponse
+from fastapi import APIRouter, Depends, Query
+from fastapi.responses import PlainTextResponse, RedirectResponse
 from middleware.auth import SignRequired
 from models.response import ResponseModel
+import service.oauth
 
 callback_router = APIRouter(
     prefix='/callback',
@@ -41,19 +42,79 @@ def router_callback_qq() -> ResponseModel:
     """
     pass
 
-@oauth_router.post(
+@oauth_router.get(
     path='/github',
     summary='GitHub OAuth 回调',
     description='Handle GitHub OAuth callback and return user information.',
 )
-def router_callback_github() -> ResponseModel:
+async def router_callback_github(
+    code: str = Query(description="The token received from GitHub for authentication.")) -> PlainTextResponse:
     """
-    Handle GitHub OAuth callback and return user information.
+    GitHub OAuth 回调处理
+    
+    - Github 成功响应：
+        - JWT: {"access_token": "gho_xxxxxxxx", "token_type": "bearer", "scope": ""}
+        - User Info:{
+            "code": "grfessg1312432313421fdgs",
+            "user_data": {
+                "login": "Yuerchu",
+                "id": 114514,
+                "node_id": "xxxxx",
+                "avatar_url": "https://avatars.githubusercontent.com/u/114514?v=4",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/Yuerchu",
+                "html_url": "https://github.com/Yuerchu",
+                "followers_url": "https://api.github.com/users/Yuerchu/followers",
+                "following_url": "https://api.github.com/users/Yuerchu/following{/other_user}",
+                "gists_url": "https://api.github.com/users/Yuerchu/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/Yuerchu/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/Yuerchu/subscriptions",
+                "organizations_url": "https://api.github.com/users/Yuerchu/orgs",
+                "repos_url": "https://api.github.com/users/Yuerchu/repos",
+                "events_url": "https://api.github.com/users/Yuerchu/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/Yuerchu/received_events",
+                "type": "User",
+                "user_view_type": "public",
+                "site_admin": false,
+                "name": "于小丘",
+                "company": null,
+                "blog": "https://www.yxqi.cn",
+                "location": "ChangSha, HuNan, China",
+                "email": "admin@yuxiaoqiu.cn",
+                "hireable": null,
+                "bio": null,
+                "twitter_username": null,
+                "notification_email": "admin@yuxiaoqiu.cn",
+                "public_repos": 17,
+                "public_gists": 0,
+                "followers": 8,
+                "following": 8,
+                "created_at": "2019-04-13T11:17:33Z",
+                "updated_at": "2025-08-20T03:03:16Z"
+                }
+            }
+    - 错误响应示例：
+        - {
+            'error': 'bad_verification_code', 
+            'error_description': 'The code passed is incorrect or expired.', 
+            'error_uri': 'https://docs.github.com/apps/managing-oauth-apps/troubleshooting-oauth-app-access-token-request-errors/#bad-verification-code'
+            }
     
     Returns:
-        ResponseModel: A model containing the response data for the GitHub OAuth callback.
+        PlainTextResponse: A response containing the user information from GitHub.
     """
-    pass
+    try:
+        access_token = await service.oauth.github.get_access_token(code)
+        # [TODO] 把access_token写数据库里
+        if not access_token:
+            return PlainTextResponse("Failed to retrieve access token from GitHub.", status_code=400)
+        
+        user_data = await service.oauth.github.get_user_info(access_token.access_token)
+        # [TODO] 把user_data写数据库里
+        
+        return PlainTextResponse(f"User information processed successfully, code: {code}, user_data: {user_data.json_dump()}", status_code=200)
+    except Exception as e:
+        return PlainTextResponse(f"An error occurred: {str(e)}", status_code=500)
 
 @pay_router.post(
     path='/alipay',

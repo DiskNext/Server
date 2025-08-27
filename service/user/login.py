@@ -1,11 +1,14 @@
+from typing import Optional
 from models.setting import Setting
 from models.response import TokenModel
 from models.user import User
 from pkg.log import log
 
-async def login(
+async def Login(
     username: str,
-    password: str
+    password: str,
+    captcha: Optional[str] = None,
+    twoFaCode: Optional[str] = None
 ) -> TokenModel | int | None:
     """
     根据账号密码进行登录。
@@ -18,6 +21,10 @@ async def login(
     :type username: str
     :param password: 用户密码
     :type password: str
+    :param captcha: 验证码
+    :type captcha: Optional[str]
+    :param twoFaCode: 二次验证代码
+    :type twoFaCode: Optional[str]
 
     :return: TokenModel 对象或状态码或 None
     :rtype: TokenModel | int | None

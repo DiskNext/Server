@@ -54,3 +54,16 @@ class SiteConfigModel(ResponseModel):
     logo_dark: Optional[str] = Field(default=None, description="网站Logo URL（深色模式）")
     captcha_type: Literal['none', 'default', 'gcaptcha', 'cloudflare turnstile'] = Field(default='none', description="验证码类型")
     captcha_key: Optional[str] = Field(default=None, description="验证码密钥")
+
+class AuthnModel(BaseModel):
+    id: str = Field(default=None, description="ID")
+    fingerprint: str = Field(default=None, description="指纹")
+
+class UserSettingModel(BaseModel):
+    authn: Optional[AuthnModel] = Field(default=None, description="认证信息")
+    group_expires: Optional[datetime] = Field(default=None, description="用户组过期时间")
+    prefer_theme: str = Field(default="#607D8B", description="用户首选主题")
+    qq: str | bool = Field(default=False, description="QQ号")
+    themes: dict = Field(default_factory=dict, description="用户主题配置")
+    two_factor: bool = Field(default=False, description="是否启用两步验证")
+    uid: int = Field(default=0, description="用户UID")

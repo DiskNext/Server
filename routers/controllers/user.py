@@ -3,10 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from middleware.auth import AuthRequired, SignRequired
 import models
-from models.response import ResponseModel, TokenModel, userModel, groupModel
+from models.response import ResponseModel, TokenModel, userModel, groupModel, UserSettingModel
 from deprecated import deprecated
 from pkg.log import log
-import service.user.login
+import service
 
 user_router = APIRouter(
     prefix="/user",
@@ -30,7 +30,7 @@ async def router_user_session(
     username = form_data.username
     password = form_data.password
     
-    user = await service.user.login.login(username=username, password=password)
+    user = await service.user.Login(username=username, password=password)
     
     if user is None:
         raise HTTPException(status_code=400, detail="Invalid username or password")
@@ -38,8 +38,11 @@ async def router_user_session(
         raise HTTPException(status_code=400, detail="User account is not fully registered")
     elif user == 2:
         raise HTTPException(status_code=403, detail="User account is banned")
-    
-    return user
+    elif isinstance(user, TokenModel):
+        return user
+    else:
+        log.error(f"Unexpected return type from login service: {type(user)}")
+        raise HTTPException(status_code=500, detail="Internal server error during login")
 
 @user_router.post(
     path='/',
@@ -83,6 +86,10 @@ def router_user_reset() -> ResponseModel:
     """
     pass
 
+@deprecated(
+    version="0.0.1", 
+    reason="邮件中带链接的激活易使得被收件服务器误判为垃圾邮件，新版更换为验证码方式"
+)
 @user_router.patch(
     path='/reset',
     summary='通过邮件里的链接重设密码',
@@ -216,10 +223,10 @@ async def router_user_me(
     user: Annotated[models.user.User, Depends(AuthRequired)],
 ) -> ResponseModel:
     """
-    Get user information.
+    获取用户信息.
     
-    Returns:
-        dict: A dictionary containing user information.
+    :return: ResponseModel containing user information.
+    :rtype: ResponseModel
     """
     
     group = await models.Group.get(id=user.group_id)
@@ -252,14 +259,22 @@ async def router_user_me(
     description='Get user storage information.',
     dependencies=[Depends(SignRequired)],
 )
-def router_user_storage() -> ResponseModel:
+def router_user_storage(
+    user: Annotated[models.user.User, Depends(AuthRequired)],
+) -> ResponseModel:
     """
     Get user storage information.
     
     Returns:
         dict: A dictionary containing user storage information.
     """
-    pass
+    return ResponseModel(
+        data={
+            "used": 0,
+            "free": 0,
+            "total": 0,
+        }
+    )
 
 @user_router.put(
     path='/authn/start',
@@ -346,9 +361,9 @@ def router_user_settings() -> ResponseModel:
     Get current user settings.
     
     Returns:
-        dict: A dictionary containing the user's current settings.
+        dict: A dictionary containing the current user settings.
     """
-    pass
+    return ResponseModel(data=UserSettingModel().model_dump())
 
 @user_settings_router.post(
     path='/avatar',
