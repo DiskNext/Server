@@ -30,3 +30,10 @@ class Policy(BaseModel, table=True):
     # 关系
     files: List["File"] = Relationship(back_populates="policy")
     folders: List["Folder"] = Relationship(back_populates="policy")
+    
+    @staticmethod
+    async def create(
+        policy: Optional["Policy"] = None,
+        **kwargs
+    ):
+        pass

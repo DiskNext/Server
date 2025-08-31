@@ -26,7 +26,7 @@ class User(BaseModel, table=True):
     email: str = Field(max_length=100, unique=True, index=True, description="用户邮箱，唯一")
     nick: Optional[str] = Field(default=None, max_length=50, description="用户昵称")
     password: str = Field(max_length=255, description="用户密码（加密后）")
-    status: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="用户状态: 0=正常, 1=未激活, 2=封禁")
+    status: Optional[bool] = Field(default=None, sa_column_kwargs={"server_default": "0"}, description="用户状态: True=正常, None=未激活, False=封禁")
     storage: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="已用存储空间（字节）")
     two_factor: Optional[str] = Field(default=None, max_length=255, description="两步验证密钥")
     avatar: Optional[str] = Field(default=None, max_length=255, description="头像地址")
@@ -64,17 +64,7 @@ class User(BaseModel, table=True):
     @staticmethod
     async def create(
         user: Optional["User"] = None,
-        email: str = None,
-        nick: Optional[str] = None,
-        password: str = None,
-        status: int = 0,
-        two_factor: Optional[str] = None,
-        avatar: Optional[str] = None,
-        options: Optional[str] = None,
-        authn: Optional[str] = None,
-        open_id: Optional[str] = None,
-        score: int = 0,
-        phone: Optional[str] = None
+        **kwargs
     ):
         """
         向数据库内添加用户。
@@ -83,19 +73,7 @@ class User(BaseModel, table=True):
         :type user: User
         """
         if not user:
-            user = User(
-                email=email,
-                nick=nick,
-                password=password,
-                status=status,
-                two_factor=two_factor,
-                avatar=avatar,
-                options=options,
-                authn=authn,
-                open_id=open_id,
-                score=score,
-                phone=phone
-            )
+            user = User(**kwargs)
         
         from .database import get_session
         

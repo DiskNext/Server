@@ -13,7 +13,7 @@ BackendVersion = "0.0.1"
 
 IsPro = False
 
-debug: bool = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
+debug: bool = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes") or False
 
 if debug:
     log.info("Debug mode is enabled. This is not recommended for production use.")

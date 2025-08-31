@@ -1,15 +1,11 @@
 from typing import Optional
 from models.setting import Setting
+from models.request import LoginRequest
 from models.response import TokenModel
 from models.user import User
 from pkg.log import log
 
-async def Login(
-    username: str,
-    password: str,
-    captcha: Optional[str] = None,
-    twoFaCode: Optional[str] = None
-) -> tuple[bool, TokenModel | str]:
+async def Login(LoginRequest: LoginRequest) -> tuple[bool, TokenModel | str]:
     """
     根据账号密码进行登录。
 
@@ -23,7 +19,7 @@ async def Login(
     :type password: str
     :param captcha: 验证码
     :type captcha: Optional[str]
-    :param twoFaCode: 二次验证代码
+    :param twoFaCode: 两步验证代码
     :type twoFaCode: Optional[str]
 
     :return: TokenModel 对象或状态码或 None
@@ -37,22 +33,22 @@ async def Login(
     # [TODO] 验证码校验
     
     # 验证用户是否存在
-    user = await User.get(email=username)
+    user = await User.get(email=LoginRequest.username)
 
     if not user:
-        log.debug(f"Cannot find user with email: {username}")
+        log.debug(f"Cannot find user with email: {LoginRequest.username}")
         return False, "User not found"
     
     # 验证密码是否正确
-    if not Password.verify(user.password, password):
-        log.debug(f"Password verification failed for user: {username}")
+    if not Password.verify(user.password, LoginRequest.password):
+        log.debug(f"Password verification failed for user: {LoginRequest.username}")
         return False, "Incorrect password"
     
     # 验证用户是否可登录
-    if user.status == 1:
+    if user.status == None:
         # 未完成注册
         return False, "Need to complete registration"
-    elif user.status == 2:
+    elif user.status == False:
         # 账号已被封禁
         return False, "Account is banned"
     

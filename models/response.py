@@ -1,3 +1,7 @@
+"""
+响应模型定义
+"""
+
 from pydantic import BaseModel, Field
 from typing import Literal, Union, Optional
 from datetime import datetime, timezone
@@ -102,3 +106,32 @@ class UserSettingModel(BaseModel):
     themes: dict = Field(default_factory=dict, description="用户主题配置")
     two_factor: bool = Field(default=False, description="是否启用两步验证")
     uid: int = Field(default=0, description="用户UID")
+
+class FoldObjectModel(BaseModel):
+    id: str = Field(default=..., description="对象ID")
+    name: str = Field(default=..., description="对象名称")
+    path: str = Field(default=..., description="对象路径")
+    thumb: bool = Field(default=False, description="是否有缩略图")
+    size: int = Field(default=None, description="对象大小，单位字节")
+    type: Literal['file', 'folder'] = Field(default=..., description="对象类型，file表示文件，folder表示文件夹")
+    date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="对象创建或修改时间")
+    create_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="对象创建时间")
+    source_enabled: bool = Field(default=False, description="是否启用离线下载源")
+
+class PolicyModel(BaseModel):
+    '''
+    存储策略模型
+    '''
+    id: str = Field(default=..., description="策略ID")
+    name: str = Field(default=..., description="策略名称")
+    type: Literal['local', 'qiniu', 'tencent', 'aliyun', 'onedrive', 'google_drive', 'dropbox', 'webdav', 'remote'] = Field(default=..., description="存储类型")
+    max_size: int = Field(default=0, description="单文件最大限制，单位字节，0表示不限制")
+    file_type: list = Field(default_factory=list, description="允许的文件类型列表，空列表表示不限制")
+
+class DirectoryModel(BaseModel):
+    '''
+    目录模型
+    '''
+    parent: str = Field(default=..., description="父目录ID")
+    objects: list[FoldObjectModel] = Field(default_factory=list, description="目录下的对象列表")
+    policy: PolicyModel = Field(default_factory=PolicyModel, description="存储策略")

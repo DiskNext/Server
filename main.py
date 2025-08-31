@@ -5,7 +5,7 @@ from models.database import init_db
 from models.migration import migration
 from pkg.lifespan import lifespan
 from pkg.JWT import JWT
-from pkg.log import log
+from pkg.log import log, set_log_level
 
 # 添加初始化数据库启动项
 lifespan.add_startup(init_db)
@@ -14,7 +14,9 @@ lifespan.add_startup(JWT.load_secret_key)
 
 # 设置日志等级
 if appmeta.debug:
-    log.set_log_level(log.LogLevelEnum.DEBUG)
+    set_log_level('DEBUG')
+else:
+    set_log_level('INFO')
 
 # 创建应用实例并设置元数据
 app = FastAPI(

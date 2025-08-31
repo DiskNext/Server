@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from middleware.auth import SignRequired
-from models.response import ResponseModel
+from models import response
 
 directory_router = APIRouter(
     prefix="/directory",
@@ -13,7 +13,7 @@ directory_router = APIRouter(
     description='Create a directory endpoint.',
     dependencies=[Depends(SignRequired)]
 )
-def router_directory_create() -> ResponseModel:
+def router_directory_create() -> response.ResponseModel:
     """
     Create a directory endpoint.
     
@@ -28,7 +28,7 @@ def router_directory_create() -> ResponseModel:
     description='Get directory contents endpoint.',
     dependencies=[Depends(SignRequired)]
 )
-def router_directory_get(path: str) -> ResponseModel:
+def router_directory_get(path: str) -> response.ResponseModel:
     """
     Get directory contents endpoint.
     
@@ -38,4 +38,8 @@ def router_directory_get(path: str) -> ResponseModel:
     Returns:
         ResponseModel: A model containing the response data for the directory contents.
     """
-    pass
+    return response.ResponseModel(
+        data=response.DirectoryModel(
+            
+        )
+    )

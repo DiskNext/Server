@@ -1,12 +1,25 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from middleware.auth import AuthRequired, SignRequired
+from middleware.auth import AuthRequired, AuthRequired
 import models
-from models.response import ResponseModel, TokenModel, userModel, groupModel, UserSettingModel
 from deprecated import deprecated
 from pkg.log import log
 import service
+
+from webauthn import (
+    generate_registration_options,
+    verify_authentication_response,
+    options_to_json,
+    base64url_to_bytes,
+)
+
+from webauthn.helpers import options_to_json_dict
+
+from webauthn.helpers.structs import (
+    PublicKeyCredentialDescriptor,
+    UserVerificationRequirement,
+)
 
 user_router = APIRouter(
     prefix="/user",
@@ -16,7 +29,7 @@ user_router = APIRouter(
 user_settings_router = APIRouter(
     prefix='/user/settings',
     tags=["user", "user_settings"],
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
 
 @user_router.post(
@@ -26,11 +39,15 @@ user_settings_router = APIRouter(
 )
 async def router_user_session(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> TokenModel:
+) -> models.response.TokenModel:
     username = form_data.username
     password = form_data.password
     
-    is_login, detail = await service.user.Login(username=username, password=password)
+    is_login, detail = await service.user.Login(
+        models.request.LoginRequest(
+            username=username, password=password
+        )
+    )
     
     if not is_login:
         if detail in ["User not found", "Incorrect password"]:
@@ -41,7 +58,7 @@ async def router_user_session(
             raise HTTPException(status_code=403, detail="User account is banned")
         else:
             raise HTTPException(status_code=500, detail="Internal server error during login")
-    if isinstance(detail, TokenModel):
+    if isinstance(detail, models.response.TokenModel):
         return detail
     else:
         log.error(f"Unexpected return type from login service: {type(detail)}")
@@ -52,7 +69,7 @@ async def router_user_session(
     summary='用户注册',
     description='User registration endpoint.',
 )
-def router_user_register() -> ResponseModel:
+def router_user_register() -> models.response.ResponseModel:
     """
     User registration endpoint.
     
@@ -66,7 +83,7 @@ def router_user_register() -> ResponseModel:
     summary='用两步验证登录',
     description='Two-factor authentication login endpoint.',
 )
-def router_user_2fa() -> ResponseModel:
+def router_user_2fa() -> models.response.ResponseModel:
     """
     Two-factor authentication login endpoint.
     
@@ -80,9 +97,9 @@ def router_user_2fa() -> ResponseModel:
     summary='发送验证码邮件',
     description='Send a verification code email.',
 )
-def router_user_email_code() -> ResponseModel:
+def router_user_email_code() -> models.response.ResponseModel:
     """
-    Send a pas
+    Send a verification code email.
     
     Returns:
         dict: A dictionary containing information about the password reset email.
@@ -98,7 +115,7 @@ def router_user_email_code() -> ResponseModel:
     summary='通过邮件里的链接重设密码',
     description='Reset password via email link.',
 )
-def router_user_reset_patch() -> ResponseModel:
+def router_user_reset_patch() -> models.response.ResponseModel:
     """
     Reset password via email link.
     
@@ -112,7 +129,7 @@ def router_user_reset_patch() -> ResponseModel:
     summary='初始化QQ登录',
     description='Initialize QQ login for a user.',
 )
-def router_user_qq() -> ResponseModel: 
+def router_user_qq() -> models.response.ResponseModel: 
     """
     Initialize QQ login for a user.
     
@@ -126,16 +143,8 @@ def router_user_qq() -> ResponseModel:
     summary='WebAuthn登录初始化',
     description='Initialize WebAuthn login for a user.',
 )
-def router_user_authn(username: str) -> ResponseModel:
-    """
-    Initialize WebAuthn login for a user.
+async def router_user_authn(username: str) -> models.response.ResponseModel:
     
-    Args:
-        username (str): The username of the user.
-    
-    Returns:
-        dict: A dictionary containing WebAuthn initialization information.
-    """
     pass
 
 @user_router.post(
@@ -143,7 +152,7 @@ def router_user_authn(username: str) -> ResponseModel:
     summary='WebAuthn登录',
     description='Finish WebAuthn login for a user.',
 )
-def router_user_authn_finish(username: str) -> ResponseModel:
+def router_user_authn_finish(username: str) -> models.response.ResponseModel:
     """
     Finish WebAuthn login for a user.
     
@@ -160,7 +169,7 @@ def router_user_authn_finish(username: str) -> ResponseModel:
     summary='获取用户主页展示用分享',
     description='Get user profile for display.',
 )
-def router_user_profile(id: str) -> ResponseModel:
+def router_user_profile(id: str) -> models.response.ResponseModel:
     """
     Get user profile for display.
     
@@ -177,7 +186,7 @@ def router_user_profile(id: str) -> ResponseModel:
     summary='获取用户头像',
     description='Get user avatar by ID and size.',
 )
-def router_user_avatar(id: str, size: int = 128) -> ResponseModel:
+def router_user_avatar(id: str, size: int = 128) -> models.response.ResponseModel:
     """
     Get user avatar by ID and size.
     
@@ -199,28 +208,28 @@ def router_user_avatar(id: str, size: int = 128) -> ResponseModel:
     summary='获取用户信息',
     description='Get user information.',
     dependencies=[Depends(dependency=AuthRequired)],
-    response_model=ResponseModel,
+    response_model=models.response.ResponseModel,
 )
 async def router_user_me(
     user: Annotated[models.user.User, Depends(AuthRequired)],
-) -> ResponseModel:
+) -> models.response.ResponseModel:
     """
     获取用户信息.
     
-    :return: ResponseModel containing user information.
-    :rtype: ResponseModel
+    :return: response.ResponseModel containing user information.
+    :rtype: response.ResponseModel
     """
     
     group = await models.Group.get(id=user.group_id)
     
     
-    user_group = groupModel(
+    user_group = models.response.groupModel(
         id=group.id,
         name=group.name,
         allowShare=group.share_enabled,
     )
     
-    users = userModel(
+    users = models.response.userModel(
             id=user.id,
             username=user.email,
             nickname=user.nick,
@@ -231,7 +240,7 @@ async def router_user_me(
         ).model_dump()
     
     
-    return ResponseModel(
+    return models.response.ResponseModel(
         data=users
     )
 
@@ -239,18 +248,18 @@ async def router_user_me(
     path='/storage',
     summary='存储信息',
     description='Get user storage information.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
 def router_user_storage(
     user: Annotated[models.user.User, Depends(AuthRequired)],
-) -> ResponseModel:
+) -> models.response.ResponseModel:
     """
     Get user storage information.
     
     Returns:
         dict: A dictionary containing user storage information.
     """
-    return ResponseModel(
+    return models.response.ResponseModel(
         data={
             "used": 0,
             "free": 0,
@@ -262,24 +271,40 @@ def router_user_storage(
     path='/authn/start',
     summary='WebAuthn登录初始化',
     description='Initialize WebAuthn login for a user.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_authn_start() -> ResponseModel:
+async def router_user_authn_start(
+    user: Annotated[models.user.User, Depends(AuthRequired)]
+) -> models.response.ResponseModel:
     """
     Initialize WebAuthn login for a user.
     
     Returns:
         dict: A dictionary containing WebAuthn initialization information.
     """
-    pass
+    # [TODO] 检查 WebAuthn 是否开启，用户是否有注册过 WebAuthn 设备等
+    
+    if not await models.Setting.get(type="authn", name="authn_enabled", format="bool"):
+        raise HTTPException(status_code=400, detail="WebAuthn is not enabled")
+    
+    options = generate_registration_options(
+        rp_id=await models.Setting.get(type="basic", name="siteURL"),
+        rp_name=await models.Setting.get(type="basic", name="siteTitle"),
+        user_name=user.email,
+        user_display_name=user.nick or user.email,
+    )
+    
+    return models.response.ResponseModel(
+        data=options_to_json_dict(options)
+    )
 
 @user_router.put(
     path='/authn/finish',
     summary='WebAuthn登录',
     description='Finish WebAuthn login for a user.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_authn_finish() -> ResponseModel:
+def router_user_authn_finish() -> models.response.ResponseModel:
     """
     Finish WebAuthn login for a user.
     
@@ -293,7 +318,7 @@ def router_user_authn_finish() -> ResponseModel:
     summary='获取用户可选存储策略',
     description='Get user selectable storage policies.',
 )
-def router_user_settings_policies() -> ResponseModel:
+def router_user_settings_policies() -> models.response.ResponseModel:
     """
     Get user selectable storage policies.
     
@@ -306,9 +331,9 @@ def router_user_settings_policies() -> ResponseModel:
     path='/nodes',
     summary='获取用户可选节点',
     description='Get user selectable nodes.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_settings_nodes() -> ResponseModel:
+def router_user_settings_nodes() -> models.response.ResponseModel:
     """
     Get user selectable nodes.
     
@@ -321,9 +346,9 @@ def router_user_settings_nodes() -> ResponseModel:
     path='/tasks',
     summary='任务队列',
     description='Get user task queue.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_settings_tasks() -> ResponseModel:
+def router_user_settings_tasks() -> models.response.ResponseModel:
     """
     Get user task queue.
     
@@ -336,24 +361,24 @@ def router_user_settings_tasks() -> ResponseModel:
     path='/',
     summary='获取当前用户设定',
     description='Get current user settings.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_settings() -> ResponseModel:
+def router_user_settings() -> models.response.ResponseModel:
     """
     Get current user settings.
     
     Returns:
         dict: A dictionary containing the current user settings.
     """
-    return ResponseModel(data=UserSettingModel().model_dump())
+    return models.response.ResponseModel(data=models.response.UserSettingModel().model_dump())
 
 @user_settings_router.post(
     path='/avatar',
     summary='从文件上传头像',
     description='Upload user avatar from file.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_settings_avatar() -> ResponseModel:
+def router_user_settings_avatar() -> models.response.ResponseModel:
     """
     Upload user avatar from file.
     
@@ -366,9 +391,9 @@ def router_user_settings_avatar() -> ResponseModel:
     path='/avatar',
     summary='设定为Gravatar头像',
     description='Set user avatar to Gravatar.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_settings_avatar_gravatar() -> ResponseModel:
+def router_user_settings_avatar_gravatar() -> models.response.ResponseModel:
     """
     Set user avatar to Gravatar.
     
@@ -381,9 +406,9 @@ def router_user_settings_avatar_gravatar() -> ResponseModel:
     path='/{option}',
     summary='更新用户设定',
     description='Update user settings.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_settings_patch(option: str) -> ResponseModel:
+def router_user_settings_patch(option: str) -> models.response.ResponseModel:
     """
     Update user settings.
     
@@ -399,9 +424,9 @@ def router_user_settings_patch(option: str) -> ResponseModel:
     path='/2fa',
     summary='获取两步验证初始化信息',
     description='Get two-factor authentication initialization information.',
-    dependencies=[Depends(SignRequired)],
+    dependencies=[Depends(AuthRequired)],
 )
-def router_user_settings_2fa() -> ResponseModel:
+def router_user_settings_2fa() -> models.response.ResponseModel:
     """
     Get two-factor authentication initialization information.
     
