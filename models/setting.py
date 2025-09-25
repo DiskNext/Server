@@ -2,7 +2,7 @@
 
 from typing import Optional, Literal
 from sqlmodel import Field, UniqueConstraint, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 SETTINGS_TYPE = Literal[
@@ -34,7 +34,7 @@ SETTINGS_TYPE = Literal[
 ]
 
 # 数据库模型
-class Setting(BaseModel, table=True):
+class Setting(TableBase, table=True):
     __tablename__ = 'settings'
     __table_args__ = (UniqueConstraint("type", "name", name="uq_setting_type_name"),)
 

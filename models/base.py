@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncAttrs
 
 utcnow = lambda: datetime.now(tz=timezone.utc)
 
-class BaseModel(SQLModel, AsyncAttrs):
+class TableBase(SQLModel, AsyncAttrs):
     __abstract__ = True
     
     id: Optional[int] = Field(default=None, primary_key=True, description="主键ID")

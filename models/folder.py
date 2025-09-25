@@ -2,7 +2,7 @@
 
 from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import Field, Relationship, UniqueConstraint, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .policy import Policy
     from .file import File
 
-class Folder(BaseModel, table=True):
+class Folder(TableBase, table=True):
     __tablename__ = 'folders'
     __table_args__ = (UniqueConstraint("name", "parent_id", name="uq_folder_name_parent"),)
 

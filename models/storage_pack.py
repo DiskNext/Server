@@ -3,13 +3,13 @@
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from sqlmodel import Field, Relationship, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .user import User
 
-class StoragePack(BaseModel, table=True):
+class StoragePack(TableBase, table=True):
     __tablename__ = 'storage_packs'
 
     name: str = Field(max_length=255, description="容量包名称")

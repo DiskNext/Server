@@ -2,13 +2,13 @@
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, text, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .download import Download
 
-class Node(BaseModel, table=True):
+class Node(TableBase, table=True):
     __tablename__ = 'nodes'
     
     status: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="节点状态: 0=正常, 1=离线")

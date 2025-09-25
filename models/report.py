@@ -2,13 +2,13 @@
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .share import Share
 
-class Report(BaseModel, table=True):
+class Report(TableBase, table=True):
     __tablename__ = 'reports'
 
     reason: int = Field(description="举报原因代码")

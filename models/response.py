@@ -107,7 +107,7 @@ class UserSettingModel(BaseModel):
     two_factor: bool = Field(default=False, description="是否启用两步验证")
     uid: int = Field(default=0, description="用户UID")
 
-class FoldObjectModel(BaseModel):
+class ObjectModel(BaseModel):
     id: str = Field(default=..., description="对象ID")
     name: str = Field(default=..., description="对象名称")
     path: str = Field(default=..., description="对象路径")
@@ -133,5 +133,5 @@ class DirectoryModel(BaseModel):
     目录模型
     '''
     parent: str = Field(default=..., description="父目录ID")
-    objects: list[FoldObjectModel] = Field(default_factory=list, description="目录下的对象列表")
+    objects: list[ObjectModel] = Field(default_factory=list, description="目录下的对象列表")
     policy: PolicyModel = Field(default_factory=PolicyModel, description="存储策略")

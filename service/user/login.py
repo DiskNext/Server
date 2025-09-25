@@ -1,4 +1,4 @@
-from typing import Optional
+from pkg.JWT.jwt import create_access_token, create_refresh_token
 from models.setting import Setting
 from models.request import LoginRequest
 from models.response import TokenModel
@@ -53,7 +53,6 @@ async def Login(LoginRequest: LoginRequest) -> tuple[bool, TokenModel | str]:
         return False, "Account is banned"
     
     # 创建令牌
-    from pkg.JWT.JWT import create_access_token, create_refresh_token
     
     access_token, access_expire = create_access_token(data={'sub': user.email})
     refresh_token, refresh_expire = create_refresh_token(data={'sub': user.email})

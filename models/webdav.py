@@ -2,12 +2,12 @@
 
 from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, UniqueConstraint, text, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 
 if TYPE_CHECKING:
     from .user import User
 
-class WebDAV(BaseModel, table=True):
+class WebDAV(TableBase, table=True):
     __tablename__ = 'webdavs'
     __table_args__ = (UniqueConstraint("name", "user_id", name="uq_webdav_name_user"),)
 

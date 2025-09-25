@@ -3,13 +3,13 @@
 from tokenize import group
 from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import Field, Relationship, text, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .user import User
 
-class Group(BaseModel, table=True):
+class Group(TableBase, table=True):
     __tablename__ = 'groups'
 
     name: str = Field(max_length=255, unique=True, description="用户组名")
@@ -17,6 +17,7 @@ class Group(BaseModel, table=True):
     max_storage: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="最大存储空间（字节）")
     share_enabled: bool = Field(default=False, sa_column_kwargs={"server_default": text("false")}, description="是否允许创建分享")
     web_dav_enabled: bool = Field(default=False, sa_column_kwargs={"server_default": text("false")}, description="是否允许使用WebDAV")
+    admin: bool = Field(default=False, description="是否为管理员组")
     speed_limit: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="速度限制 (KB/s), 0为不限制")
     options: Optional[str] = Field(default=None, description="其他选项 (JSON格式)")
 

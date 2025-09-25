@@ -3,14 +3,14 @@
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from sqlmodel import Field, Relationship, text, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .user import User
     from .report import Report
 
-class Share(BaseModel, table=True):
+class Share(TableBase, table=True):
     __tablename__ = 'shares'
 
     password: Optional[str] = Field(default=None, max_length=255, description="分享密码（加密后）")

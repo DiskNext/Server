@@ -4,7 +4,7 @@ from pkg.conf import appmeta
 from models.database import init_db
 from models.migration import migration
 from pkg.lifespan import lifespan
-from pkg.JWT import JWT
+from pkg.JWT import jwt as JWT
 from pkg.log import log, set_log_level
 
 # 添加初始化数据库启动项

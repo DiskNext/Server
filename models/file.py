@@ -2,7 +2,7 @@
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from .policy import Policy
     from .source_link import SourceLink
 
-class File(BaseModel, table=True):
+class File(TableBase, table=True):
     __tablename__ = 'files'
 
     name: str = Field(max_length=255, description="文件名")

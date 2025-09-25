@@ -2,14 +2,14 @@
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .user import User
     from .download import Download
 
-class Task(BaseModel, table=True):
+class Task(TableBase, table=True):
     __tablename__ = 'tasks'
 
     status: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="任务状态: 0=排队中, 1=处理中, 2=完成, 3=错误")

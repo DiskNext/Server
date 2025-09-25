@@ -2,14 +2,14 @@
 
 from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import Field, Relationship, text, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .file import File
     from .folder import Folder
 
-class Policy(BaseModel, table=True):
+class Policy(TableBase, table=True):
     __tablename__ = 'policies'
 
     name: str = Field(max_length=255, unique=True, description="策略名称")

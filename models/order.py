@@ -2,13 +2,13 @@
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .user import User
 
-class Order(BaseModel, table=True):
+class Order(TableBase, table=True):
     __tablename__ = 'orders'
 
     order_no: str = Field(max_length=255, unique=True, index=True, description="订单号，唯一")

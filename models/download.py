@@ -2,7 +2,7 @@
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .task import Task
     from .node import Node
 
-class Download(BaseModel, table=True):
+class Download(TableBase, table=True):
     __tablename__ = 'downloads'
 
     status: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="下载状态: 0=进行中, 1=完成, 2=错误")

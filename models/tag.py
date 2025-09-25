@@ -2,13 +2,13 @@
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, UniqueConstraint, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .user import User
 
-class Tag(BaseModel, table=True):
+class Tag(TableBase, table=True):
     __tablename__ = 'tags'
     __table_args__ = (UniqueConstraint("name", "user_id", name="uq_tag_name_user"),)
 

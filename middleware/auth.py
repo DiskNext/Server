@@ -1,7 +1,7 @@
 from typing import Annotated, Optional
 from fastapi import Depends, HTTPException
 from models.user import User
-from pkg.JWT import JWT
+from pkg.JWT import jwt as JWT
 import jwt
 from jwt import InvalidTokenError
 

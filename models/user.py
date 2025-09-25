@@ -3,7 +3,7 @@
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from sqlmodel import Field, Relationship, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from .database import get_session
 from sqlmodel import select
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from .task import Task
     from .webdav import WebDAV
 
-class User(BaseModel, table=True):
+class User(TableBase, table=True):
     __tablename__ = 'users'
 
     email: str = Field(max_length=100, unique=True, index=True, description="用户邮箱，唯一")

@@ -2,13 +2,13 @@
 
 from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
 if TYPE_CHECKING:
     from .file import File
 
-class SourceLink(BaseModel, table=True):
+class SourceLink(TableBase, table=True):
     __tablename__ = 'source_links'
 
     name: str = Field(max_length=255, description="链接名称")

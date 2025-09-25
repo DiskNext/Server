@@ -2,10 +2,10 @@
 
 from typing import Optional
 from sqlmodel import Field, text, Column, func, DateTime
-from .base import BaseModel
+from .base import TableBase
 from datetime import datetime
 
-class Redeem(BaseModel, table=True):
+class Redeem(TableBase, table=True):
     __tablename__ = 'redeems'
 
     type: int = Field(description="兑换码类型")
