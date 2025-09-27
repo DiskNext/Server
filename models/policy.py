@@ -26,6 +26,7 @@ class Policy(TableBase, table=True):
     file_name_rule: Optional[str] = Field(default=None, max_length=255, description="文件命名规则")
     is_origin_link_enable: bool = Field(default=False, sa_column_kwargs={"server_default": text("false")}, description="是否开启源链接访问")
     options: Optional[str] = Field(default=None, description="其他选项 (JSON格式)")
+    # options 示例: {"token":"","file_type":null,"mimetype":"","od_redirect":"http://127.0.0.1:8000/...","chunk_size":52428800,"s3_path_style":false}
     
     # 关系
     files: List["File"] = Relationship(back_populates="policy")

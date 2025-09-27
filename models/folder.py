@@ -1,7 +1,7 @@
 # my_project/models/folder.py
 
 from typing import Optional, List, TYPE_CHECKING
-from sqlmodel import Field, Relationship, UniqueConstraint, Column, func, DateTime
+from sqlmodel import Field, Relationship, UniqueConstraint, CheckConstraint
 from .base import TableBase
 from datetime import datetime
 
@@ -12,9 +12,20 @@ if TYPE_CHECKING:
 
 class Folder(TableBase, table=True):
     __tablename__ = 'folders'
-    __table_args__ = (UniqueConstraint("name", "parent_id", name="uq_folder_name_parent"),)
+    __table_args__ = (
+        UniqueConstraint(
+            "owner_id",
+            "parent_id", 
+            "name", 
+            name="uq_folder_name_parent",
+        ),
+        CheckConstraint(
+            "name NOT LIKE '%/%' AND name NOT LIKE '%\\%'",
+            name="ck_folder_name_no_slash",
+        ),
+    )
 
-    name: str = Field(max_length=255, description="目录名")
+    name: str = Field(max_length=255, nullable=False, description="目录名")
     
     # 外键
     parent_id: Optional[int] = Field(default=None, foreign_key="folders.id", index=True, description="父目录ID")

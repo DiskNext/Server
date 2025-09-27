@@ -1,13 +1,26 @@
 # my_project/models/group.py
 
-from tokenize import group
 from typing import Optional, List, TYPE_CHECKING
-from sqlmodel import Field, Relationship, text, Column, func, DateTime
+from sqlmodel import Field, Relationship, text, Column, JSON
 from .base import TableBase
-from datetime import datetime
+from sqlmodel import SQLModel
 
 if TYPE_CHECKING:
     from .user import User
+
+class GroupOptions(SQLModel):
+    archive_download: Optional[bool] = False
+    archive_task: Optional[bool] = False
+    share_download: Optional[bool] = False
+    share_free: Optional[bool] = False
+    webdav_proxy: Optional[bool] = False
+    aria2: Optional[bool] = False
+    relocate: Optional[bool] = False
+    source_batch: Optional[int] = 10
+    redirected_source: Optional[bool] = False
+    available_nodes: Optional[List[int]] = []
+    select_node: Optional[bool] = False
+    advance_delete: Optional[bool] = False
 
 class Group(TableBase, table=True):
     __tablename__ = 'groups'
@@ -19,7 +32,7 @@ class Group(TableBase, table=True):
     web_dav_enabled: bool = Field(default=False, sa_column_kwargs={"server_default": text("false")}, description="是否允许使用WebDAV")
     admin: bool = Field(default=False, description="是否为管理员组")
     speed_limit: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="速度限制 (KB/s), 0为不限制")
-    options: Optional[str] = Field(default=None, description="其他选项 (JSON格式)")
+    options: GroupOptions = Field(default=GroupOptions, sa_column=Column(JSON), description="其他选项")
 
     # 关系：一个组可以有多个用户
     users: List["User"] = Relationship(

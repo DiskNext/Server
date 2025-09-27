@@ -1,7 +1,7 @@
 # my_project/models/file.py
 
 from typing import Optional, TYPE_CHECKING
-from sqlmodel import Field, Relationship, Column, func, DateTime
+from sqlmodel import Field, Relationship, UniqueConstraint, CheckConstraint, Index
 from .base import TableBase
 from datetime import datetime
 
@@ -13,13 +13,19 @@ if TYPE_CHECKING:
 
 class File(TableBase, table=True):
     __tablename__ = 'files'
+    __table_args__ = (
+        UniqueConstraint("folder_id", "name", name="uq_file_folder_name_active"),
+        CheckConstraint("name NOT LIKE '%/%' AND name NOT LIKE '%\\%'", name="ck_file_name_no_slash"),
+        Index("ix_file_user_updated", "user_id", "updated_at"),
+        Index("ix_file_folder_updated", "folder_id", "updated_at"),
+        Index("ix_file_user_size", "user_id", "size"),
+    )
 
     name: str = Field(max_length=255, description="文件名")
     source_name: Optional[str] = Field(default=None, description="源文件名")
     size: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="文件大小（字节）")
-    pic_info: Optional[str] = Field(default=None, max_length=255, description="图片信息（如尺寸）")
     upload_session_id: Optional[str] = Field(default=None, max_length=255, unique=True, index=True, description="分块上传会话ID")
-    file_metadata: Optional[str] = Field(default=None, description="文件元数据 (JSON格式)")
+    file_metadata: Optional[str] = Field(default=None, description="文件元数据 (JSON格式)") # 后续可以考虑模型继承？
     
     # 外键
     user_id: int = Field(foreign_key="users.id", index=True, description="所属用户ID")

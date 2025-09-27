@@ -2,7 +2,7 @@
 
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
-from sqlmodel import Field, Relationship, Column, func, DateTime
+from sqlmodel import Field, Relationship, UniqueConstraint
 from .base import TableBase
 from .database import get_session
 from sqlmodel import select
@@ -24,6 +24,8 @@ class User(TableBase, table=True):
     __tablename__ = 'users'
 
     email: str = Field(max_length=100, unique=True, index=True, description="用户邮箱，唯一")
+    phone: str = Field(default=None, nullable=True, index=True, description="用户手机号，唯一")
+    
     nick: Optional[str] = Field(default=None, max_length=50, description="用户昵称")
     password: str = Field(max_length=255, description="用户密码（加密后）")
     status: Optional[bool] = Field(default=None, sa_column_kwargs={"server_default": "0"}, description="用户状态: True=正常, None=未激活, False=封禁")
@@ -44,11 +46,15 @@ class User(TableBase, table=True):
     # 关系
     group: "Group" = Relationship(
         back_populates="users",
-        sa_relationship_kwargs={"foreign_keys": "User.group_id"}
+        sa_relationship_kwargs={
+            "foreign_keys": "User.group_id"
+        }
     )
     previous_group: Optional["Group"] = Relationship(
         back_populates="previous_users",
-        sa_relationship_kwargs={"foreign_keys": "User.previous_group_id"}
+        sa_relationship_kwargs={
+            "foreign_keys": "User.previous_group_id"
+        }
     )
     
     downloads: list["Download"] = Relationship(back_populates="user")

@@ -11,17 +11,18 @@ class TableBase(SQLModel, AsyncAttrs):
     
     id: Optional[int] = Field(default=None, primary_key=True, description="主键ID")
     created_at: datetime = Field(
+        sa_type=DateTime,
         default_factory=utcnow,
         description="创建时间",
         )
     updated_at: datetime = Field(
         sa_type=DateTime,
-        description="更新时间",
         sa_column_kwargs={"default": utcnow, "onupdate": utcnow},
-        default_factory=utcnow
+        default_factory=utcnow,
+        description="更新时间",
     )
     deleted_at: Optional[datetime] = Field(
         default=None, 
+        nullable=True,
         description="删除时间",
-        sa_column={"nullable": True}
     )
