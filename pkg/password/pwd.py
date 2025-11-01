@@ -1,4 +1,5 @@
 import secrets
+from argon2 import PasswordHasher
 
 class Password:
     
@@ -23,16 +24,14 @@ class Password:
         password: str,
     ) -> str:
         """
-        生成密码的加盐哈希值。
+        生成密码的Argon2哈希值。
         
-        :return: 包含盐值和哈希值的字符串。
+        :param password: 要哈希的密码。
+        :return: 使用Argon2算法生成的密码哈希。
         :rtype: str
         """
-        import os, hashlib, binascii
-        salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
-        pwdhash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-        pwdhash = binascii.hexlify(pwdhash)
-        return (salt + pwdhash).decode('ascii')
+        ph = PasswordHasher()
+        return ph.hash(password)
     
     @staticmethod
     def verify(
@@ -40,20 +39,17 @@ class Password:
         provided_password: str, 
     ) -> bool:
         """
-        验证存储的密码哈希值与用户提供的密码是否匹配。
+        验证存储的Argon2密码哈希值与用户提供的密码是否匹配。
         
-        :param stored_password: 存储的密码哈希值(包含盐值)。
+        :param stored_password: 存储的Argon2密码哈希值。
         :param provided_password: 用户提供的密码。
-        :param debug: 是否输出调试信息，将会输出原密码和哈希值。
-        :return: 如果密码匹配返回 `True` ,否则返回 `False` 。
-        """
-        import hashlib, binascii
-        salt = stored_password[:64]
-        stored_password = stored_password[64:]
-        pwdhash = hashlib.pbkdf2_hmac('sha256', 
-                                      provided_password.encode('utf-8'), 
-                                      salt.encode('ascii'), 
-                                      100000)
-        pwdhash = binascii.hexlify(pwdhash).decode('ascii')
         
-        return secrets.compare_digest(pwdhash, stored_password)
+        :return: 如果密码匹配返回 `True` ,否则返回 `False` 。
+        :rtype: bool
+        """
+        ph = PasswordHasher()
+        try:
+            ph.verify(stored_password, provided_password)
+            return True
+        except:
+            return False

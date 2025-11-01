@@ -5,7 +5,7 @@ from models.response import TokenModel
 from models.user import User
 from pkg.log import log
 
-async def Login(LoginRequest: LoginRequest) -> tuple[bool, TokenModel | str]:
+async def Login(LoginRequest: LoginRequest) -> TokenModel | bool | None:
     """
     根据账号密码进行登录。
 
@@ -32,32 +32,29 @@ async def Login(LoginRequest: LoginRequest) -> tuple[bool, TokenModel | str]:
 
     # [TODO] 验证码校验
     
-    # 验证用户是否存在
+    # 获取用户信息
     user = await User.get(email=LoginRequest.username)
 
+    # 验证用户是否存在
     if not user:
         log.debug(f"Cannot find user with email: {LoginRequest.username}")
-        return False, "User not found"
+        return None
     
     # 验证密码是否正确
     if not Password.verify(user.password, LoginRequest.password):
         log.debug(f"Password verification failed for user: {LoginRequest.username}")
-        return False, "Incorrect password"
+        return None
     
     # 验证用户是否可登录
-    if user.status == None:
-        # 未完成注册
-        return False, "Need to complete registration"
-    elif user.status == False:
-        # 账号已被封禁
-        return False, "Account is banned"
+    if not user.status:
+        # 未完成注册 or 账号已被封禁
+        return False
     
     # 创建令牌
-    
     access_token, access_expire = create_access_token(data={'sub': user.email})
     refresh_token, refresh_expire = create_refresh_token(data={'sub': user.email})
 
-    return True, TokenModel(
+    return TokenModel(
         access_token=access_token,
         access_expires=access_expire,
         refresh_token=refresh_token,

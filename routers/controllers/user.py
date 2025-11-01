@@ -49,19 +49,13 @@ async def router_user_session(
         )
     )
     
-    if not is_login:
-        if detail in ["User not found", "Incorrect password"]:
-            raise HTTPException(status_code=400, detail="Invalid username or password")
-        elif detail == "Need to complete registration":
-            raise HTTPException(status_code=400, detail="User account is not fully registered")
-        elif detail == "Account is banned":
-            raise HTTPException(status_code=403, detail="User account is banned")
-        else:
-            raise HTTPException(status_code=500, detail="Internal server error during login")
     if isinstance(detail, models.response.TokenModel):
         return detail
+    elif detail is None:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    elif detail is False:
+        raise HTTPException(status_code=403, detail="User account is banned or not fully registered")
     else:
-        log.error(f"Unexpected return type from login service: {type(detail)}")
         raise HTTPException(status_code=500, detail="Internal server error during login")
 
 @user_router.post(
