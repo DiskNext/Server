@@ -1,6 +1,6 @@
 import os
 import shutil
-from loguru import logger as log as log
+from loguru import logger
 import argparse
 from typing import List, Tuple, Set
 import time
@@ -28,7 +28,7 @@ def parse_args() -> argparse.Namespace:
                        help='清理 .pytest_cache 目录')
     parser.add_argument('--exclude', type=str, default="",
                        help='排除的目录，多个目录用逗号分隔')
-    parser.add_argument('--log-file', 
+    parser.add_argument('--logger-file', 
                        help='指定日志文件路径')
     parser.add_argument('--dry-run', action='store_true',
                        help='仅列出将要删除的文件，不实际删除')
@@ -69,7 +69,7 @@ def get_excluded_dirs(exclude_arg: str) -> Set[str]:
 
 def clean_pycache(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False) -> List[str]:
     """清理 __pycache__ 目录"""
-    log.info("开始清理 __pycache__ 目录pass")
+    logger.info("开始清理 __pycache__ 目录pass")
     cleaned_paths = []
     
     for dirpath, dirnames, _ in os.walk(root_dir):
@@ -84,13 +84,13 @@ def clean_pycache(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False) 
             if success:
                 cleaned_paths.append(pycache_dir)
             else:
-                log.error(f"无法清理 {pycache_dir}: {error}")
+                logger.error(f"无法清理 {pycache_dir}: {error}")
     
     return cleaned_paths
 
 def clean_pyc_files(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False) -> List[str]:
     """清理 .pyc 文件"""
-    log.info("开始清理 .pyc 文件pass")
+    logger.info("开始清理 .pyc 文件pass")
     cleaned_files = []
     
     for dirpath, dirnames, filenames in os.walk(root_dir):
@@ -106,13 +106,13 @@ def clean_pyc_files(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False
                 if success:
                     cleaned_files.append(file_path)
                 else:
-                    log.error(f"无法清理 {file_path}: {error}")
+                    logger.error(f"无法清理 {file_path}: {error}")
     
     return cleaned_files
 
 def clean_pytest_cache(root_dir: str, exclude_dirs: Set[str], dry_run: bool = False) -> List[str]:
     """清理 .pytest_cache 目录"""
-    log.info("开始清理 .pytest_cache 目录pass")
+    logger.info("开始清理 .pytest_cache 目录pass")
     cleaned_paths = []
     
     for dirpath, dirnames, _ in os.walk(root_dir):
@@ -127,26 +127,26 @@ def clean_pytest_cache(root_dir: str, exclude_dirs: Set[str], dry_run: bool = Fa
             if success:
                 cleaned_paths.append(cache_dir)
             else:
-                log.error(f"无法清理 {cache_dir}: {error}")
+                logger.error(f"无法清理 {cache_dir}: {error}")
     
     return cleaned_paths
 
 def clean_nicegui(root_dir: str, dry_run: bool = False) -> Tuple[bool, str]:
     """清理 .nicegui 目录"""
-    log.info("开始清理 .nicegui 目录pass")
+    logger.info("开始清理 .nicegui 目录pass")
     nicegui_dir = os.path.join(root_dir, ".nicegui")
     if os.path.exists(nicegui_dir) and os.path.isdir(nicegui_dir):
         success, error = safe_remove(nicegui_dir, dry_run)
         if success:
             return True, nicegui_dir
         else:
-            log.error(f"无法清理 {nicegui_dir}: {error}")
+            logger.error(f"无法清理 {nicegui_dir}: {error}")
             return False, nicegui_dir
     return False, nicegui_dir
 
 def clean_testdb(root_dir: str, dry_run: bool = False) -> Tuple[bool, str, str]:
     """清理测试数据库文件"""
-    log.info("开始清理 test.db 文件pass")
+    logger.info("开始清理 test.db 文件pass")
     test_db = os.path.join(root_dir, "test.db")
     if os.path.exists(test_db) and os.path.isfile(test_db):
         success, error = safe_remove(test_db, dry_run)
@@ -163,23 +163,19 @@ def main():
     exclude_dirs = get_excluded_dirs(args.exclude)
 
     # 设置日志文件
-    if args.log_file:
-        log.set_log_file(args.log_file)
-
-    log.title()
-    log.title(title=f"清理工具 Cleaner\t\tVersion:{Version}", size="h2")
-    print('')
+    if args.logger_file:
+        logger.set_logger_file(args.logger_file)
 
     if not os.path.exists(root_dir):
-        log.error(f"目录不存在 Directory not exists: {root_dir}")
+        logger.error(f"目录不存在 Directory not exists: {root_dir}")
         return 1
 
-    log.info(f"清理目录 Clean Directory: {root_dir}")
+    logger.info(f"清理目录 Clean Directory: {root_dir}")
     if args.dry_run:
-        log.warning("模拟运行模式: 将只列出要删除的文件，不会实际删除")
+        logger.warning("模拟运行模式: 将只列出要删除的文件，不会实际删除")
     
     if exclude_dirs:
-        log.info(f"排除目录: {', '.join(exclude_dirs)}")
+        logger.info(f"排除目录: {', '.join(exclude_dirs)}")
 
     try:
         total_cleaned = 0
@@ -188,55 +184,55 @@ def main():
         if not args.no_pycache and confirm_action("是否清理 __pycache__ 目录?", args.yes):
             cleaned = clean_pycache(root_dir, exclude_dirs, args.dry_run)
             for path in cleaned:
-                log.info(f"已清理 Removed: {path}")
+                logger.info(f"已清理 Removed: {path}")
             total_cleaned += len(cleaned)
 
         # 清理 .pyc 文件
         if args.pyc and confirm_action("是否清理 .pyc 文件?", args.yes):
             cleaned = clean_pyc_files(root_dir, exclude_dirs, args.dry_run)
             for path in cleaned:
-                log.info(f"已清理 Removed: {path}")
+                logger.info(f"已清理 Removed: {path}")
             total_cleaned += len(cleaned)
             
         # 清理 .pytest_cache
         if args.pytest_cache and confirm_action("是否清理 .pytest_cache 目录?", args.yes):
             cleaned = clean_pytest_cache(root_dir, exclude_dirs, args.dry_run)
             for path in cleaned:
-                log.info(f"已清理 Removed: {path}")
+                logger.info(f"已清理 Removed: {path}")
             total_cleaned += len(cleaned)
 
         # 清理 .nicegui
         if not args.no_nicegui and confirm_action("是否清理 .nicegui 目录?", args.yes):
             cleaned, path = clean_nicegui(root_dir, args.dry_run)
             if cleaned:
-                log.info(f"已清理 Removed: {path}")
+                logger.info(f"已清理 Removed: {path}")
                 total_cleaned += 1
             else:
-                log.debug(f"未找到 Not found: {path}")
+                logger.debug(f"未找到 Not found: {path}")
 
         # 清理 test.db
         if not args.no_testdb and confirm_action("是否清理 test.db 文件?", args.yes):
             success, path, error = clean_testdb(root_dir, args.dry_run)
             if success:
-                log.info(f"已清理 Removed: {path}")
+                logger.info(f"已清理 Removed: {path}")
                 total_cleaned += 1
             elif error == "文件不存在":
-                log.debug(f"未找到 Not found: {path}")
+                logger.debug(f"未找到 Not found: {path}")
             else:
-                log.error(f"清理失败 Failed: {error}")
+                logger.error(f"清理失败 Failed: {error}")
 
     except KeyboardInterrupt:
-        log.warning("操作被用户中断")
+        logger.warning("操作被用户中断")
         return 1
     except Exception as e:
-        log.error(f"错误 Error: {e}")
+        logger.error(f"错误 Error: {e}")
         return 1
     else:
         elapsed_time = time.time() - start_time
         if args.dry_run:
-            log.success(f"模拟清理结束，发现 {total_cleaned} 个可清理项目 (用时: {elapsed_time:.2f}秒)")
+            logger.success(f"模拟清理结束，发现 {total_cleaned} 个可清理项目 (用时: {elapsed_time:.2f}秒)")
         else:
-            log.success(f"清理结束，共清理 {total_cleaned} 个项目 (用时: {elapsed_time:.2f}秒)")
+            logger.success(f"清理结束，共清理 {total_cleaned} 个项目 (用时: {elapsed_time:.2f}秒)")
         return 0
 
 if __name__ == "__main__":
