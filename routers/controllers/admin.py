@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from middleware.auth import AdminRequired
+from models import User
 from models.response import ResponseModel
 
 # 管理员根目录 /api/admin
@@ -271,14 +272,32 @@ def router_admin_get_users(
     description='Create a new user',
     dependencies=[Depends(AdminRequired)],
 )
-def router_admin_create_user() -> ResponseModel:
+async def router_admin_create_user(
+    user: User
+) -> ResponseModel:
     """
     创建一个新的用户，设置用户名、密码等信息。
     
     Returns:
         ResponseModel: 包含创建结果的响应模型。
     """
-    pass
+    try:
+        existing_user = await User.get(email=user.email)
+        if existing_user:
+            return ResponseModel(
+                code=400, 
+                message="User with this email already exists."
+            )
+        await user.create(**user.model_dump())
+    except Exception as e:
+        return ResponseModel(
+            code=500,
+            message=str(e)
+        )
+    else:
+        return ResponseModel(
+            data=user.model_dump()
+        )
 
 @admin_user_router.patch(
     path='/{user_id}',

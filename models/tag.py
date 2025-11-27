@@ -1,4 +1,3 @@
-# my_project/models/tag.py
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, UniqueConstraint, Column, func, DateTime

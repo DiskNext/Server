@@ -1,4 +1,3 @@
-# my_project/models/order.py
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, Column, func, DateTime

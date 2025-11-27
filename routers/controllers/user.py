@@ -3,8 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from middleware.auth import AuthRequired, AuthRequired
 import models
-from deprecated import deprecated
-from pkg.log import log
+from loguru import logger as log
 import service
 
 from webauthn import (
@@ -100,14 +99,11 @@ def router_user_email_code() -> models.response.ResponseModel:
     """
     pass
 
-@deprecated(
-    version="0.0.1", 
-    reason="邮件中带链接的激活易使得被收件服务器误判为垃圾邮件，新版更换为验证码方式"
-)
 @user_router.patch(
     path='/reset',
     summary='通过邮件里的链接重设密码',
     description='Reset password via email link.',
+    deprecated=True,
 )
 def router_user_reset_patch() -> models.response.ResponseModel:
     """

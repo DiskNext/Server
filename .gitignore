@@ -4,6 +4,7 @@ __pycache__/
 .env/
 .vscode/
 .VSCodeCounter/
+node_modules/
 
 *.py[cod]
 *.pyo

@@ -30,3 +30,4 @@ async def init_db(
     """创建数据库结构"""
     async with engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
+        

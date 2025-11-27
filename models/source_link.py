@@ -1,4 +1,3 @@
-# my_project/models/source_link.py
 
 from typing import TYPE_CHECKING, Optional
 from sqlmodel import Field, Relationship, Index

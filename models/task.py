@@ -1,4 +1,3 @@
-# my_project/models/task.py
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, CheckConstraint
@@ -14,7 +13,6 @@ class Task(TableBase, table=True):
     __table_args__ = (
         CheckConstraint("progress BETWEEN 0 AND 100", name="ck_task_progress_range"),
     )
-
 
     status: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="任务状态: 0=排队中, 1=处理中, 2=完成, 3=错误")
     type: int = Field(description="任务类型")

@@ -1,15 +1,16 @@
-# my_project/models/download.py
-
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, UniqueConstraint
-from .base import TableBase
+from .base import SQLModelBase, UUIDTableBase
 
 if TYPE_CHECKING:
     from .user import User
     from .task import Task
     from .node import Node
 
-class Download(TableBase, table=True):
+class DownloadBase(SQLModelBase):
+    pass
+
+class Download(DownloadBase, UUIDTableBase, table=True):
     __tablename__ = 'downloads'
     __table_args__ = (
         UniqueConstraint("node_id", "g_id", name="uq_download_node_gid"),
@@ -37,3 +38,5 @@ class Download(TableBase, table=True):
     user: "User" = Relationship(back_populates="downloads")
     task: Optional["Task"] = Relationship(back_populates="downloads")
     node: "Node" = Relationship(back_populates="downloads")
+    
+    

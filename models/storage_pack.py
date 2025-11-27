@@ -1,4 +1,3 @@
-# my_project/models/storage_pack.py
 
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime

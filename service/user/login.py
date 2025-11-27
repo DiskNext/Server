@@ -3,7 +3,7 @@ from models.setting import Setting
 from models.request import LoginRequest
 from models.response import TokenModel
 from models.user import User
-from pkg.log import log
+from loguru import logger as log
 
 async def Login(LoginRequest: LoginRequest) -> TokenModel | bool | None:
     """

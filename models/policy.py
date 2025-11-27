@@ -1,4 +1,3 @@
-# my_project/models/policy.py
 
 from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import Field, Relationship, text, Column, func, DateTime

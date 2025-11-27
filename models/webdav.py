@@ -1,4 +1,3 @@
-# my_project/models/webdav.py
 
 from typing import TYPE_CHECKING
 from sqlmodel import Field, Relationship, UniqueConstraint, text, Column, func, DateTime

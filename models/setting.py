@@ -1,4 +1,3 @@
-# my_project/models/setting.py
 
 from typing import Optional, Literal
 from sqlmodel import Field, UniqueConstraint, Column, func, DateTime

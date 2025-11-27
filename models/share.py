@@ -1,4 +1,3 @@
-# my_project/models/share.py
 
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime

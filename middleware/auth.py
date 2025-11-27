@@ -43,12 +43,16 @@ async def SignRequired(
     pass
 
 async def AdminRequired(
-    token: Annotated[str, Depends(JWT.oauth2_scheme)]
+    user: Annotated[User, Depends(AuthRequired)]
 ) -> Optional["User"]:
     """
     验证是否为管理员。
     
     使用方法：
-    >>> APIRouter(dependencies=[Depends(is_admin)])
+    >>> APIRouter(dependencies=[Depends(AdminRequired)])
     """
-    pass
+    # [TODO] 肯定是要改的，记得跨表联查的时候需要加某个方法
+    # 不知道是不是这样写 if user.awaitable_attrs.group.admin:
+    if user.group.admin:
+        return user
+    raise HTTPException(status_code=403, detail="Admin Required")

@@ -1,4 +1,3 @@
-# my_project/models/node.py
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, text, Column, func, DateTime

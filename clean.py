@@ -1,6 +1,6 @@
 import os
 import shutil
-from pkg.log import log as log
+from loguru import logger as log as log
 import argparse
 from typing import List, Tuple, Set
 import time

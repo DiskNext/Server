@@ -1,0 +1,20 @@
+[project]
+name = "DiskNext-Server"
+version = "0.0.1"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiohttp>=3.13.2",
+    "aiosqlite>=0.21.0",
+    "argon2-cffi>=25.1.0",
+    "fastapi>=0.122.0",
+    "loguru>=0.7.3",
+    "pyjwt>=2.10.1",
+    "python-dotenv>=1.2.1",
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.0.44",
+    "sqlmodel>=0.0.27",
+    "uvicorn>=0.38.0",
+    "webauthn>=2.7.0",
+]

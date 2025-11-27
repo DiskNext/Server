@@ -1,4 +1,3 @@
-# my_project/models/redeem.py
 
 from typing import Optional
 from sqlmodel import Field, text, Column, func, DateTime

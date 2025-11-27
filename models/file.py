@@ -1,4 +1,3 @@
-# my_project/models/file.py
 
 from typing import Optional, TYPE_CHECKING
 from sqlmodel import Field, Relationship, UniqueConstraint, CheckConstraint, Index

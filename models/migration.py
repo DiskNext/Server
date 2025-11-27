@@ -1,8 +1,9 @@
+
 from .setting import Setting
 from pkg.conf.appmeta import BackendVersion
 from .response import ThemeModel
 from pkg.password.pwd import Password
-from pkg.log import log
+from loguru import logger as log
 
 async def migration() -> None:
     """
@@ -188,37 +189,39 @@ async def init_default_group() -> None:
         raise RuntimeError(f"无法创建初始游客用户组: {e}")
 
 async def init_default_user() -> None:
-    
+
     log.info('初始化管理员用户...')
-    
+
     from .user import User
     from .group import Group
-    
-    # 检查管理员用户是否存在
-    admin_user = await User.get(id=1)
-    
-    if not admin_user:
-        # 创建初始管理员用户
-        
-        # 获取管理员组
-        admin_group = await Group.get(id=1)
-        if not admin_group:
-            raise RuntimeError("管理员用户组不存在，无法创建管理员用户")
-        
-        # 生成管理员密码
-        from pkg.password.pwd import Password
-        admin_password = Password.generate(8)
-        hashed_admin_password = Password.hash(admin_password)
-        
-        admin_user = User(
-            email="admin@yxqi.cn",
-            nick="admin",
-            status=True,  # 正常状态
-            group_id=admin_group.id,
-            password=hashed_admin_password,
+    from .database import get_session
+
+    async for session in get_session():
+        # 检查管理员用户是否存在
+        admin_user = await User.get(session, User.id == 1)
+
+        if not admin_user:
+            # 创建初始管理员用户
+
+            # 获取管理员组
+            admin_group = await Group.get(id=1)
+            if not admin_group:
+                raise RuntimeError("管理员用户组不存在，无法创建管理员用户")
+
+            # 生成管理员密码
+            from pkg.password.pwd import Password
+            admin_password = Password.generate(8)
+            hashed_admin_password = Password.hash(admin_password)
+
+            admin_user = User(
+                email="admin@yxqi.cn",
+                nick="admin",
+                status=True,  # 正常状态
+                group_id=admin_group.id,
+                password=hashed_admin_password,
             )
-        
-        admin_user = await User.create(admin_user)
-        
-        log.info(f'初始管理员账号：[bold]admin@yxqi.cn[/bold]')
-        log.info(f'初始管理员密码：[bold]{admin_password}[/bold]')
+
+            admin_user = await admin_user.save(session)
+
+            log.info(f'初始管理员账号：[bold]admin@yxqi.cn[/bold]')
+            log.info(f'初始管理员密码：[bold]{admin_password}[/bold]')

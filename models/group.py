@@ -1,4 +1,3 @@
-# my_project/models/group.py
 
 from typing import Optional, List, TYPE_CHECKING
 from sqlmodel import Field, Relationship, text, Column, JSON
