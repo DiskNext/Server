@@ -73,7 +73,7 @@ Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; verti
     Setting(name="hot_share_num", value="10", type="share"),
     Setting(name="gravatar_server", value="https://www.gravatar.com/", type="avatar"),
     Setting(name="defaultTheme", value="#3f51b5", type="basic"),
-    Setting(name="themes", value=ThemeModel().model_dump(), type="basic"),
+    Setting(name="themes", value=ThemeModel().model_dump_json(), type="basic"),
     Setting(name="aria2_token", value="", type="aria2"),
     Setting(name="aria2_rpcurl", value="", type="aria2"),
     Setting(name="aria2_temp_path", value="", type="aria2"),
@@ -118,110 +118,99 @@ Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; verti
 
 async def init_default_settings() -> None:
     from .setting import Setting
-    
+    from .database import get_session
+    from sqlalchemy import and_
+
     log.info('初始化设置...')
-    
-    try:
+
+    async for session in get_session():
         # 检查是否已经存在版本设置
-        ver = await Setting.get(type="version", name=f"db_version_{BackendVersion}")
-        if ver == "installed":
+        ver = await Setting.get(
+            session,
+            and_(Setting.type == "version", Setting.name == f"db_version_{BackendVersion}")
+        )
+        if ver and ver.value == "installed":
             return
-        else: raise ValueError("Database version mismatch or not installed.")
-    except:
-        for setting in default_settings:
-            await Setting.add(
-                type=setting.type, 
-                name=setting.name, 
-                value=setting.value
-            )
+
+        # 批量添加默认设置
+        await Setting.add(session, default_settings)
 
 async def init_default_group() -> None:
-    from .group import Group
-    
+    from .group import Group, GroupOptions
+    from .database import get_session
+
     log.info('初始化用户组...')
-    
-    try:
+
+    async for session in get_session():
         # 未找到初始管理组时，则创建
-        if not await Group.get(id=1):
-            await Group.create(
+        if not await Group.get(session, Group.id == 1):
+            admin_group = Group(
                 name="管理员",
                 max_storage=1 * 1024 * 1024 * 1024,  # 1GB
                 share_enabled=True,
                 web_dav_enabled=True,
-                options={
-                    "ArchiveDownload": True,
-                    "ArchiveTask": True,
-                    "ShareDownload": True,
-                    "Aria2": True,
-                }
+                admin=True,
+                options=GroupOptions(
+                    archive_download=True,
+                    archive_task=True,
+                    share_download=True,
+                    aria2=True,
+                ).model_dump(),
             )
-    except Exception as e:
-        raise RuntimeError(f"无法创建管理员用户组: {e}")
+            await admin_group.save(session)
 
-    try:
         # 未找到初始注册会员时，则创建
-        if not await Group.get(id=2):
-            await Group.create(
+        if not await Group.get(session, Group.id == 2):
+            member_group = Group(
                 name="注册会员",
                 max_storage=1 * 1024 * 1024 * 1024,  # 1GB
                 share_enabled=True,
                 web_dav_enabled=True,
-                options={
-                    "ShareDownload": True,
-                }
+                options=GroupOptions(share_download=True).model_dump(),
             )
-    except Exception as e:
-        raise RuntimeError(f"无法创建初始注册会员用户组: {e}")
-    
-    try:
+            await member_group.save(session)
+
         # 未找到初始游客组时，则创建
-        if not await Group.get(id=3):
-            await Group.create(
+        if not await Group.get(session, Group.id == 3):
+            guest_group = Group(
                 name="游客",
                 policies="[]",
                 share_enabled=False,
                 web_dav_enabled=False,
-                options={
-                    "ShareDownload": True,
-                }
+                options=GroupOptions(share_download=True).model_dump(),
             )
-    except Exception as e:
-        raise RuntimeError(f"无法创建初始游客用户组: {e}")
+            await guest_group.save(session)
 
 async def init_default_user() -> None:
-
-    log.info('初始化管理员用户...')
-
     from .user import User
     from .group import Group
     from .database import get_session
+
+    log.info('初始化管理员用户...')
 
     async for session in get_session():
         # 检查管理员用户是否存在
         admin_user = await User.get(session, User.id == 1)
 
         if not admin_user:
-            # 创建初始管理员用户
-
             # 获取管理员组
-            admin_group = await Group.get(id=1)
+            admin_group = await Group.get(session, Group.id == 1)
             if not admin_group:
                 raise RuntimeError("管理员用户组不存在，无法创建管理员用户")
 
             # 生成管理员密码
-            from pkg.password.pwd import Password
             admin_password = Password.generate(8)
             hashed_admin_password = Password.hash(admin_password)
 
             admin_user = User(
-                email="admin@yxqi.cn",
+                username="admin",
                 nick="admin",
-                status=True,  # 正常状态
+                status=True,
                 group_id=admin_group.id,
                 password=hashed_admin_password,
             )
 
-            admin_user = await admin_user.save(session)
+            await admin_user.save(session)
 
-            log.info(f'初始管理员账号：[bold]admin@yxqi.cn[/bold]')
+            log.info(f'初始管理员账号：[bold]admin[/bold]')
             log.info(f'初始管理员密码：[bold]{admin_password}[/bold]')

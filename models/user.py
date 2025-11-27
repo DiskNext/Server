@@ -3,25 +3,23 @@ from datetime import datetime
 from sqlmodel import Field, Relationship, UniqueConstraint
 from .base import TableBase
 
-from .group import Group
-from .download import Download
-from .file import File
-from .folder import Folder
-from .order import Order
-from .share import Share
-from .storage_pack import StoragePack
-from .tag import Tag
-from .task import Task
-from .webdav import WebDAV
+if TYPE_CHECKING:
+    from .group import Group
+    from .download import Download
+    from .file import File
+    from .folder import Folder
+    from .order import Order
+    from .share import Share
+    from .storage_pack import StoragePack
+    from .tag import Tag
+    from .task import Task
+    from .webdav import WebDAV
 
 class User(TableBase, table=True):
     """用户模型"""
 
-    email: str = Field(max_length=100, unique=True, index=True)
-    """用户邮箱，唯一"""
-    
-    phone: str | None = Field(default=None, nullable=True, index=True)
-    """用户手机号，唯一"""
+    username: str = Field(max_length=50, unique=True, index=True)
+    """用户名，唯一"""
     
     nick: str | None = Field(default=None, max_length=50)
     """用户昵称"""

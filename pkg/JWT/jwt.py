@@ -1,6 +1,8 @@
 from fastapi.security import OAuth2PasswordBearer
 from models.setting import Setting
+from models.database import get_session
 from datetime import datetime, timedelta, timezone
+from sqlalchemy import and_
 import jwt
 
 oauth2_scheme = OAuth2PasswordBearer(
@@ -14,12 +16,16 @@ SECRET_KEY = ''
 async def load_secret_key() -> None:
     """
     从数据库读取 JWT 的密钥。
-    
-    :param key: 用于加密和解密 JWT 的密钥
-    :type key: str
     """
     global SECRET_KEY
-    SECRET_KEY = await Setting.get(type='auth', name='secret_key')
+    async for session in get_session():
+        setting = await Setting.get(
+            session,
+            and_(Setting.type == "auth", Setting.name == "secret_key")
+        )
+        if setting:
+            SECRET_KEY = setting.value
+        break
     
 # 访问令牌
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> tuple[str, datetime]:

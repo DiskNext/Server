@@ -1,9 +1,12 @@
-from typing import Annotated, Optional
+from typing import Annotated
+
 from fastapi import Depends, HTTPException
+from jwt import InvalidTokenError
+import jwt
+
 from models.user import User
 from pkg.JWT import jwt as JWT
-import jwt
-from jwt import InvalidTokenError
+from .dependencies import SessionDep
 
 credentials_exception = HTTPException(
     status_code=401,
@@ -12,8 +15,9 @@ credentials_exception = HTTPException(
 )
 
 async def AuthRequired(
-    token: Annotated[str, Depends(JWT.oauth2_scheme)]
-) -> Optional["User"]:
+    session: SessionDep,
+    token: Annotated[str, Depends(JWT.oauth2_scheme)],
+) -> User:
     """
     AuthRequired 需要登录
     """
@@ -25,7 +29,7 @@ async def AuthRequired(
             raise credentials_exception
 
         # 从数据库获取用户信息
-        user = await User.get(email=username)
+        user = await User.get(session, User.username == username)
         if not user:
             raise credentials_exception
 
@@ -35,24 +39,25 @@ async def AuthRequired(
         raise credentials_exception
 
 async def SignRequired(
-    token: Annotated[str, Depends(JWT.oauth2_scheme)]
-) -> Optional["User"]:
+    session: SessionDep,
+    token: Annotated[str, Depends(JWT.oauth2_scheme)],
+) -> User | None:
     """
     SignAuthRequired 需要验证请求签名
     """
     pass
 
 async def AdminRequired(
-    user: Annotated[User, Depends(AuthRequired)]
-) -> Optional["User"]:
+    user: Annotated[User, Depends(AuthRequired)],
+) -> User:
     """
     验证是否为管理员。
-    
+
     使用方法：
     >>> APIRouter(dependencies=[Depends(AdminRequired)])
     """
-    # [TODO] 肯定是要改的，记得跨表联查的时候需要加某个方法
-    # 不知道是不是这样写 if user.awaitable_attrs.group.admin:
+    # TODO: 跨表联查时需要使用 awaitable_attrs
+    # if await user.awaitable_attrs.group.admin:
     if user.group.admin:
         return user
     raise HTTPException(status_code=403, detail="Admin Required")

@@ -31,7 +31,7 @@ class Share(TableBase, table=True):
     remain_downloads: int | None = Field(default=None, description="剩余下载次数 (NULL为不限制)")
     expires: datetime | None = Field(default=None, description="过期时间 (NULL为永不过期)")
     preview_enabled: bool = Field(default=True, sa_column_kwargs={"server_default": text("true")}, description="是否允许预览")
-    source_name: str | None = Field(default=None, max_length=255, index=True, description="源名称（冗余字段，便于展示）")
+    source_name: str | None = Field(default=None, max_length=255, description="源名称（冗余字段，便于展示）")
     score: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="兑换此分享所需的积分")
     
     # 外键

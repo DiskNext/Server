@@ -39,7 +39,7 @@ class TokenModel(BaseModel):
     refresh_expires: datetime = Field(default=None, description="刷新令牌的过期时间")
     refresh_token: str = Field(default=None, description="刷新令牌")
 
-class groupModel(BaseModel):
+class GroupModel(BaseModel):
     '''
     用户组模型
     '''
@@ -58,7 +58,7 @@ class groupModel(BaseModel):
     selectNode: bool = Field(default=False, description="是否允许选择离线下载节点")
     advanceDelete: bool = Field(default=False, description="是否允许高级删除")
 
-class userModel(BaseModel):
+class UserModel(BaseModel):
     '''
     用户模型
     '''
@@ -71,7 +71,7 @@ class userModel(BaseModel):
     preferred_theme: ThemeModel = Field(default_factory=ThemeModel, description="用户首选主题")
     score: int = Field(default=0, description="用户积分")
     anonymous: bool = Field(default=False, description="是否为匿名用户")
-    group: groupModel = Field(default_factory=None, description="用户所属用户组")
+    group: GroupModel = Field(default_factory=None, description="用户所属用户组")
     tags: list = Field(default_factory=list, description="用户标签列表")
     
 class SiteConfigModel(ResponseModel):

@@ -1,24 +1,15 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from middleware.auth import AuthRequired, AuthRequired
-import models
-from loguru import logger as log
-import service
-
-from webauthn import (
-    generate_registration_options,
-    verify_authentication_response,
-    options_to_json,
-    base64url_to_bytes,
-)
-
+from sqlalchemy import and_
+from webauthn import generate_registration_options
 from webauthn.helpers import options_to_json_dict
 
-from webauthn.helpers.structs import (
-    PublicKeyCredentialDescriptor,
-    UserVerificationRequirement,
-)
+import models
+import service
+from middleware.auth import AuthRequired
+from middleware.dependencies import SessionDep
 
 user_router = APIRouter(
     prefix="/user",
@@ -37,22 +28,22 @@ user_settings_router = APIRouter(
     description='User login endpoint.',
 )
 async def router_user_session(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    session: SessionDep,
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> models.response.TokenModel:
     username = form_data.username
     password = form_data.password
-    
-    is_login, detail = await service.user.Login(
-        models.request.LoginRequest(
-            username=username, password=password
-        )
+
+    result = await service.user.Login(
+        session,
+        models.request.LoginRequest(username=username, password=password),
     )
-    
-    if isinstance(detail, models.response.TokenModel):
-        return detail
-    elif detail is None:
+
+    if isinstance(result, models.response.TokenModel):
+        return result
+    elif result is None:
         raise HTTPException(status_code=401, detail="Invalid username or password")
-    elif detail is False:
+    elif result is False:
         raise HTTPException(status_code=403, detail="User account is banned or not fully registered")
     else:
         raise HTTPException(status_code=500, detail="Internal server error during login")
@@ -201,38 +192,34 @@ def router_user_avatar(id: str, size: int = 128) -> models.response.ResponseMode
     response_model=models.response.ResponseModel,
 )
 async def router_user_me(
+    session: SessionDep,
     user: Annotated[models.user.User, Depends(AuthRequired)],
 ) -> models.response.ResponseModel:
     """
     获取用户信息.
-    
+
     :return: response.ResponseModel containing user information.
     :rtype: response.ResponseModel
     """
-    
-    group = await models.Group.get(id=user.group_id)
-    
-    
-    user_group = models.response.groupModel(
+    group = await models.Group.get(session, models.Group.id == user.group_id)
+
+    user_group = models.response.GroupModel(
         id=group.id,
         name=group.name,
         allowShare=group.share_enabled,
     )
-    
-    users = models.response.userModel(
-            id=user.id,
-            username=user.email,
-            nickname=user.nick,
-            status=user.status,
-            created_at=user.created_at,
-            score=user.score,
-            group=user_group,
-        ).model_dump()
-    
-    
-    return models.response.ResponseModel(
-        data=users
-    )
+
+    users = models.response.UserModel(
+        id=user.id,
+        username=user.username,
+        nickname=user.nick,
+        status=user.status,
+        created_at=user.created_at,
+        score=user.score,
+        group=user_group,
+    ).model_dump()
+
+    return models.response.ResponseModel(data=users)
 
 @user_router.get(
     path='/storage',
@@ -264,29 +251,40 @@ def router_user_storage(
     dependencies=[Depends(AuthRequired)],
 )
 async def router_user_authn_start(
-    user: Annotated[models.user.User, Depends(AuthRequired)]
+    session: SessionDep,
+    user: Annotated[models.user.User, Depends(AuthRequired)],
 ) -> models.response.ResponseModel:
     """
     Initialize WebAuthn login for a user.
-    
+
     Returns:
         dict: A dictionary containing WebAuthn initialization information.
     """
-    # [TODO] 检查 WebAuthn 是否开启，用户是否有注册过 WebAuthn 设备等
-    
-    if not await models.Setting.get(type="authn", name="authn_enabled", format="bool"):
+    # TODO: 检查 WebAuthn 是否开启，用户是否有注册过 WebAuthn 设备等
+    authn_setting = await models.Setting.get(
+        session,
+        and_(models.Setting.type == "authn", models.Setting.name == "authn_enabled")
+    )
+    if not authn_setting or authn_setting.value != "1":
         raise HTTPException(status_code=400, detail="WebAuthn is not enabled")
-    
+
+    site_url_setting = await models.Setting.get(
+        session,
+        and_(models.Setting.type == "basic", models.Setting.name == "siteURL")
+    )
+    site_title_setting = await models.Setting.get(
+        session,
+        and_(models.Setting.type == "basic", models.Setting.name == "siteTitle")
+    )
+
     options = generate_registration_options(
-        rp_id=await models.Setting.get(type="basic", name="siteURL"),
-        rp_name=await models.Setting.get(type="basic", name="siteTitle"),
-        user_name=user.email,
-        user_display_name=user.nick or user.email,
+        rp_id=site_url_setting.value if site_url_setting else "",
+        rp_name=site_title_setting.value if site_title_setting else "",
+        user_name=user.username,
+        user_display_name=user.nick or user.username,
     )
-    
-    return models.response.ResponseModel(
-        data=options_to_json_dict(options)
-    )
+
+    return models.response.ResponseModel(data=options_to_json_dict(options))
 
 @user_router.put(
     path='/authn/finish',
