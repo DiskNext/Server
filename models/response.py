@@ -13,7 +13,7 @@ class ResponseModel(BaseModel):
     '''
     code: int = Field(default=0, description="系统内部状态码, 0表示成功，其他表示失败", lt=60000, gt=0)
     data: Union[dict, list, str, int, float, None] = Field(None, description="响应数据")
-    msg: Optional[str] = Field(default=None, description="响应消息，可以是错误消息或信息提示")
+    msg: str | None = Field(default=None, description="响应消息，可以是错误消息或信息提示")
     instance_id: str = Field(default_factory=lambda: str(uuid4()), description="实例ID，用于标识请求的唯一性")
     
 class ThemeModel(BaseModel):
@@ -81,12 +81,12 @@ class SiteConfigModel(ResponseModel):
     title: str = Field(default="DiskNext", description="网站标题")
     themes: dict = Field(default_factory=dict, description="网站主题配置")
     default_theme: str = Field(default="default", description="默认主题RGB色号")
-    site_notice: Optional[str] = Field(default=None, description="网站公告")
+    site_notice: str | None = Field(default=None, description="网站公告")
     user: dict = Field(default_factory=dict, description="用户信息")
-    logo_light: Optional[str] = Field(default=None, description="网站Logo URL")
-    logo_dark: Optional[str] = Field(default=None, description="网站Logo URL（深色模式）")
+    logo_light: str | None = Field(default=None, description="网站Logo URL")
+    logo_dark: str | None = Field(default=None, description="网站Logo URL（深色模式）")
     captcha_type: Literal['none', 'default', 'gcaptcha', 'cloudflare turnstile'] = Field(default='none', description="验证码类型")
-    captcha_key: Optional[str] = Field(default=None, description="验证码密钥")
+    captcha_key: str | None = Field(default=None, description="验证码密钥")
 
 class AuthnModel(BaseModel):
     '''
@@ -100,7 +100,7 @@ class UserSettingModel(BaseModel):
     用户设置模型
     '''
     authn: Optional[AuthnModel] = Field(default=None, description="认证信息")
-    group_expires: Optional[datetime] = Field(default=None, description="用户组过期时间")
+    group_expires: datetime | None = Field(default=None, description="用户组过期时间")
     prefer_theme: str = Field(default="#5898d4", description="用户首选主题")
     qq: str | bool = Field(default=False, description="QQ号")
     themes: dict = Field(default_factory=dict, description="用户主题配置")

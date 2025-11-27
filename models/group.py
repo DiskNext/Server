@@ -8,24 +8,24 @@ if TYPE_CHECKING:
     from .user import User
 
 class GroupOptions(SQLModel):
-    archive_download: Optional[bool] = False
-    archive_task: Optional[bool] = False
-    share_download: Optional[bool] = False
-    share_free: Optional[bool] = False
-    webdav_proxy: Optional[bool] = False
-    aria2: Optional[bool] = False
-    relocate: Optional[bool] = False
-    source_batch: Optional[int] = 10
-    redirected_source: Optional[bool] = False
-    available_nodes: Optional[List[int]] = []
-    select_node: Optional[bool] = False
-    advance_delete: Optional[bool] = False
+    archive_download: bool | None = False
+    archive_task: bool | None = False
+    share_download: bool | None = False
+    share_free: bool | None = False
+    webdav_proxy: bool | None = False
+    aria2: bool | None = False
+    relocate: bool | None = False
+    source_batch: int | None = 10
+    redirected_source: bool | None = False
+    available_nodes: List[int] | None = []
+    select_node: bool | None = False
+    advance_delete: bool | None = False
 
 class Group(TableBase, table=True):
-    __tablename__ = 'groups'
+    """用户组模型"""
 
     name: str = Field(max_length=255, unique=True, description="用户组名")
-    policies: Optional[str] = Field(default=None, max_length=255, description="允许的策略ID列表，逗号分隔")
+    policies: str | None = Field(default=None, max_length=255, description="允许的策略ID列表，逗号分隔")
     max_storage: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="最大存储空间（字节）")
     share_enabled: bool = Field(default=False, sa_column_kwargs={"server_default": text("false")}, description="是否允许创建分享")
     web_dav_enabled: bool = Field(default=False, sa_column_kwargs={"server_default": text("false")}, description="是否允许使用WebDAV")
@@ -34,11 +34,11 @@ class Group(TableBase, table=True):
     options: GroupOptions = Field(default=GroupOptions, sa_column=Column(JSON), description="其他选项")
 
     # 关系：一个组可以有多个用户
-    users: List["User"] = Relationship(
+    user: List["User"] = Relationship(
         back_populates="group",
         sa_relationship_kwargs={"foreign_keys": "User.group_id"}
     )
-    previous_users: List["User"] = Relationship(
+    previous_user: List["User"] = Relationship(
         back_populates="previous_group",
         sa_relationship_kwargs={"foreign_keys": "User.previous_group_id"}
     )
@@ -46,13 +46,13 @@ class Group(TableBase, table=True):
     @staticmethod
     async def create(
         group: Optional["Group"] = None,
-        name: Optional[str] = None,
-        policies: Optional[str] = None,
+        name: str | None = None,
+        policies: str | None = None,
         max_storage: int = 0,
         share_enabled: bool = False,
         web_dav_enabled: bool = False,
         speed_limit: int = 0,
-        options: Optional[dict] = None,
+        options: dict | None = None,
     ) -> "Group":
         """
         向数据库内添加用户组。如果提供了 `group` 参数，则使用该对象，否则创建一个新的用户组对象。
@@ -128,13 +128,13 @@ class Group(TableBase, table=True):
     @staticmethod
     async def set(
         id: int,
-        name: Optional[str] = None,
-        policies: Optional[str] = None,
-        max_storage: Optional[int] = None,
-        share_enabled: Optional[bool] = None,
-        web_dav_enabled: Optional[bool] = None,
-        speed_limit: Optional[int] = None,
-        options: Optional[str] = None
+        name: str | None = None,
+        policies: str | None = None,
+        max_storage: int | None = None,
+        share_enabled: bool | None = None,
+        web_dav_enabled: bool | None = None,
+        speed_limit: int | None = None,
+        options: str | None = None
     ) -> Optional["Group"]:
         """
         更新用户组信息。
@@ -142,19 +142,19 @@ class Group(TableBase, table=True):
         :param id: 用户组ID
         :type id: int
         :param name: 用户组名
-        :type name: Optional[str]
+        :type name: str | None
         :param policies: 允许的策略ID列表，逗号分隔
-        :type policies: Optional[str]
+        :type policies: str | None
         :param max_storage: 最大存储空间（字节）
-        :type max_storage: Optional[int]
+        :type max_storage: int | None
         :param share_enabled: 是否允许创建分享
-        :type share_enabled: Optional[bool]
+        :type share_enabled: bool | None
         :param web_dav_enabled: 是否允许使用WebDAV
-        :type web_dav_enabled: Optional[bool]
+        :type web_dav_enabled: bool | None
         :param speed_limit: 速度限制 (KB/s), 0为不限制
-        :type speed_limit: Optional[int]
+        :type speed_limit: int | None
         :param options: 其他选项 (JSON格式)
-        :type options: Optional[str]
+        :type options: str | None
         :return: 更新后的用户组对象或 None
         :rtype: Optional[Group]
         """

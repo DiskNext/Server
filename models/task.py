@@ -9,7 +9,8 @@ if TYPE_CHECKING:
     from .download import Download
 
 class Task(TableBase, table=True):
-    __tablename__ = 'tasks'
+    """任务模型"""
+
     __table_args__ = (
         CheckConstraint("progress BETWEEN 0 AND 100", name="ck_task_progress_range"),
     )
@@ -17,11 +18,11 @@ class Task(TableBase, table=True):
     status: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="任务状态: 0=排队中, 1=处理中, 2=完成, 3=错误")
     type: int = Field(description="任务类型")
     progress: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="任务进度 (0-100)")
-    error: Optional[str] = Field(default=None, description="错误信息")
-    props: Optional[str] = Field(default=None, description="任务属性 (JSON格式)")
+    error: str | None = Field(default=None, description="错误信息")
+    props: str | None = Field(default=None, description="任务属性 (JSON格式)")
     
     # 外键
-    user_id: int = Field(foreign_key="users.id", index=True, description="所属用户ID")
+    user_id: int = Field(foreign_key="user.id", index=True, description="所属用户ID")
     
     # 关系
     user: "User" = Relationship(back_populates="tasks")

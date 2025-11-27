@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from .file import File
 
 class Folder(TableBase, table=True):
-    __tablename__ = 'folders'
     __table_args__ = (
         UniqueConstraint(
             "owner_id",
@@ -27,9 +26,9 @@ class Folder(TableBase, table=True):
     name: str = Field(max_length=255, nullable=False, description="目录名")
     
     # 外键
-    parent_id: Optional[int] = Field(default=None, foreign_key="folders.id", index=True, description="父目录ID")
-    owner_id: int = Field(foreign_key="users.id", index=True, description="所有者用户ID")
-    policy_id: int = Field(foreign_key="policies.id", index=True, description="所属存储策略ID")
+    parent_id: int | None = Field(default=None, foreign_key="folder.id", index=True, description="父目录ID")
+    owner_id: int = Field(foreign_key="user.id", index=True, description="所有者用户ID")
+    policy_id: int = Field(foreign_key="policy.id", index=True, description="所属存储策略ID")
     
     # 关系
     owner: "User" = Relationship(back_populates="folders")

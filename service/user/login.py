@@ -18,9 +18,9 @@ async def Login(LoginRequest: LoginRequest) -> TokenModel | bool | None:
     :param password: 用户密码
     :type password: str
     :param captcha: 验证码
-    :type captcha: Optional[str]
+    :type captcha: str | None
     :param twoFaCode: 两步验证代码
-    :type twoFaCode: Optional[str]
+    :type twoFaCode: str | None
 
     :return: TokenModel 对象或状态码或 None
     :rtype: TokenModel | int | None

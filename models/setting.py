@@ -34,18 +34,19 @@ SETTINGS_TYPE = Literal[
 
 # 数据库模型
 class Setting(TableBase, table=True):
-    __tablename__ = 'settings'
+    """设置模型"""
+
     __table_args__ = (UniqueConstraint("type", "name", name="uq_setting_type_name"),)
 
     type: str = Field(max_length=255, description="设置类型/分组")
     name: str = Field(max_length=255, description="设置项名称")
-    value: Optional[str] = Field(default=None, description="设置值")
+    value: str | None = Field(default=None, description="设置值")
 
     @staticmethod
     async def add(
         type: SETTINGS_TYPE = None,
         name: str = None,
-        value: Optional[str] = None
+        value: str | None = None
     ) -> None:
         """
         向数据库内添加设置项目。
@@ -55,7 +56,7 @@ class Setting(TableBase, table=True):
         :param name: 设置项名称
         :type name: str
         :param value: 设置值，默认为 None
-        :type value: Optional[str]
+        :type value: str | None
         """
         from .database import get_session
         
@@ -114,7 +115,7 @@ class Setting(TableBase, table=True):
     async def set(
         type: SETTINGS_TYPE,
         name: str,
-        value: Optional[str] = None
+        value: str | None = None
     ) -> None:
         """
         更新指定类型和名称的设置项的值。
@@ -124,7 +125,7 @@ class Setting(TableBase, table=True):
         :param name: 设置项名称
         :type name: str
         :param value: 新的设置值，默认为 None
-        :type value: Optional[str]
+        :type value: str | None
         
         :raises ValueError: 如果设置项不存在，则抛出异常
         """

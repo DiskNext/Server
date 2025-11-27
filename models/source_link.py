@@ -8,7 +8,8 @@ if TYPE_CHECKING:
     from .file import File
 
 class SourceLink(TableBase, table=True):
-    __tablename__ = 'source_links'
+    """链接模型"""
+
     __table_args__ = (
         Index("ix_sourcelink_file_name", "file_id", "name"),
     )
@@ -17,7 +18,7 @@ class SourceLink(TableBase, table=True):
     downloads: int = Field(default=0, sa_column_kwargs={"server_default": "0"}, description="通过此链接的下载次数")
     
     # 外键
-    file_id: int = Field(foreign_key="files.id", index=True, description="关联的文件ID")
+    file_id: int = Field(foreign_key="file.id", index=True, description="关联的文件ID")
     
     # 关系
     file: "File" = Relationship(back_populates="source_links")

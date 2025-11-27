@@ -13,5 +13,5 @@ class LoginRequest(BaseModel):
     """
     username: str = Field(..., description="用户名或邮箱")
     password: str = Field(..., description="用户密码")
-    captcha: Optional[str] = Field(None, description="验证码")
-    twoFaCode: Optional[str] = Field(None, description="两步验证代码")
+    captcha: str | None = Field(None, description="验证码")
+    twoFaCode: str | None = Field(None, description="两步验证代码")
