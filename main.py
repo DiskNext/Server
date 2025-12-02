@@ -25,17 +25,7 @@ app = FastAPI(
 
 # 挂载路由
 for router in routers.Router:
-    app.include_router(
-        router,
-        prefix='/api',
-        responses={
-            200: {"description": "成功响应 Successful operation"},
-            401: {"description": "未授权 Unauthorized"},
-            403: {"description": "禁止访问 Forbidden"},
-            404: {"description": "未找到 Not found"},
-            500: {"description": "内部服务器错误 Internal server error"},
-        },
-    )
+    app.include_router(router, prefix='/api')
 
 # 启动时打印欢迎信息
 if __name__ == "__main__":

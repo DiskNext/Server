@@ -22,7 +22,7 @@ async def AuthRequired(
     AuthRequired 需要登录
     """
     try:
-        payload = jwt.decode(token, JWT.SECRET_KEY, algorithms="HS256")
+        payload = jwt.decode(token, JWT.SECRET_KEY, algorithms=["HS256"])
         username = payload.get("sub")
 
         if username is None:
@@ -56,8 +56,7 @@ async def AdminRequired(
     使用方法：
     >>> APIRouter(dependencies=[Depends(AdminRequired)])
     """
-    # TODO: 跨表联查时需要使用 awaitable_attrs
-    # if await user.awaitable_attrs.group.admin:
-    if user.group.admin:
+    group = await user.awaitable_attrs.group
+    if group.admin:
         return user
     raise HTTPException(status_code=403, detail="Admin Required")

@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
+from loguru import logger
 
 from middleware.auth import AdminRequired
 from middleware.dependencies import SessionDep
 from models import User
+from models.user import UserPublic
 from models.response import ResponseModel
 
 # 管理员根目录 /api/admin
@@ -234,17 +236,19 @@ def router_admin_delete_group(group_id: int) -> ResponseModel:
     description='Get user information by ID',
     dependencies=[Depends(AdminRequired)],
 )
-def router_admin_get_user(user_id: int) -> ResponseModel:
+async def router_admin_get_user(session: SessionDep, user_id: int) -> ResponseModel:
     """
     根据用户ID获取用户信息，包括用户名、邮箱、注册时间等。
     
     Args:
+        session(SessionDep): 数据库会话依赖项。
         user_id (int): 用户ID。
-    
+
     Returns:
         ResponseModel: 包含用户信息的响应模型。
     """
-    pass
+    user = await User.get_exist_one(session, user_id)
+    return ResponseModel(data=user.to_public().model_dump())
 
 @admin_user_router.get(
     path='/list',
@@ -252,21 +256,33 @@ def router_admin_get_user(user_id: int) -> ResponseModel:
     description='Get user list',
     dependencies=[Depends(AdminRequired)],
 )
-def router_admin_get_users(
+async def router_admin_get_users(
+    session: SessionDep,
     page: int = 1,
     page_size: int = 20
 ) -> ResponseModel:
     """
     获取用户列表，支持分页。
-    
+
     Args:
+        session: 数据库会话依赖项。
         page (int): 页码，默认为1。
-        page_size (int, optional): 每页显示的用户数量，默认为20。
-    
+        page_size (int): 每页显示的用户数量，默认为20。
+
     Returns:
         ResponseModel: 包含用户列表的响应模型。
     """
-    pass
+    offset = (page - 1) * page_size
+    users: list[User] = await User.get(
+        session,
+        None,
+        fetch_mode="all",
+        offset=offset,
+        limit=page_size
+    )
+    return ResponseModel(
+        data=[user.to_public().model_dump() for user in users]
+    )
 
 @admin_user_router.post(
     path='/create',
@@ -284,21 +300,14 @@ async def router_admin_create_user(
     Returns:
         ResponseModel: 包含创建结果的响应模型。
     """
-    try:
-        existing_user = await User.get(session, User.username == user.username)
-        if existing_user:
-            return ResponseModel(
-                code=400,
-                message="User with this username already exists."
-            )
-        await user.save(session)
-    except Exception as e:
+    existing_user = await User.get(session, User.username == user.username)
+    if existing_user:
         return ResponseModel(
-            code=500,
-            message=str(e)
+            code=400,
+            msg="User with this username already exists."
         )
-    else:
-        return ResponseModel(data=user.model_dump())
+    user = await user.save(session)
+    return ResponseModel(data=user.to_public().model_dump())
 
 @admin_user_router.patch(
     path='/{user_id}',

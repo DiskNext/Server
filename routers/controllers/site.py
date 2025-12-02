@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from sqlalchemy import and_
+import json
 
 from middleware.dependencies import SessionDep
 from models.response import ResponseModel
@@ -21,6 +22,11 @@ async def _get_setting_bool(session: SessionDep, type_: str, name: str) -> bool:
     """获取布尔类型设置值"""
     value = await _get_setting(session, type_, name)
     return value == "1" if value else False
+
+async def _get_setting_json(session: SessionDep, type_: str, name: str) -> dict | list | None:
+    """获取 JSON 类型设置值"""
+    value = await _get_setting(session, type_, name)
+    return json.loads(value) if value else None
 
 
 @site_router.get(
@@ -77,7 +83,7 @@ async def router_site_config(session: SessionDep):
             "forgetCaptcha": await _get_setting_bool(session, "login", "forget_captcha"),
             "emailActive": await _get_setting_bool(session, "login", "email_active"),
             "QQLogin": None,
-            "themes": await _get_setting(session, "basic", "themes"),
+            "themes": await _get_setting_json(session, "basic", "themes"),
             "defaultTheme": await _get_setting(session, "basic", "defaultTheme"),
             "score_enabled": None,
             "share_score_rate": None,
